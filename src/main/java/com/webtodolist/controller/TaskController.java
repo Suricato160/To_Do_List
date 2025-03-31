@@ -1,10 +1,11 @@
 package com.webtodolist.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import com.webtodolist.entity.Task;
-import com.webtodolist.repository.TaskRepository;
+import com.webtodolist.entity.Task.TaskStatus;
+import com.webtodolist.service.TaskService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -12,22 +13,38 @@ import java.util.List;
 @RequestMapping("/api/tasks")
 public class TaskController {
 
+    private final TaskService taskService;
+
     @Autowired
-    private TaskRepository taskRepository;
-
-    // Ottieni tutte le attività
-    @GetMapping
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
     }
 
-    // Crea una nuova attività
+    @GetMapping("/{id}")
+    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
+        return taskService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Task>> getTasksByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(taskService.findByUserId(userId));
+    }
+
+    @GetMapping("/project/{projectId}")
+    public ResponseEntity<List<Task>> getTasksByProjectId(@PathVariable Long projectId) {
+        return ResponseEntity.ok(taskService.findByProjectId(projectId));
+    }
+
     @PostMapping
-    public Task createTask(@RequestBody Task task) {
-        return taskRepository.save(task);
+    public ResponseEntity<Task> createTask(@RequestBody Task task) {
+        return ResponseEntity.ok(taskService.saveTask(task));
     }
 
-   
-
-  
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+        taskService.deleteTask(id);
+        return ResponseEntity.noContent().build();
+    }
 }

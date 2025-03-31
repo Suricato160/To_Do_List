@@ -1,5 +1,7 @@
 package com.webtodolist.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -35,19 +37,25 @@ public class Task {
     private TaskStatus status;
 
     @Column(name = "data_pending")
-    private Data dataPending;
+    private LocalDateTime dataPending;
 
     @Column(name = "data_started")
-    private Data dataStarted;
+    private LocalDateTime dataStarted;
 
     @Column(name = "data_progress")
-    private Data dataProgress;
+    private LocalDateTime dataProgress;
 
     @Column(name = "data_completed")
-    private Data dataCompleted;
+    private LocalDateTime dataCompleted;
 
     @Column(name = "data_deadline")
-    private Data dataDeadline;
+    private LocalDateTime dataDeadline;
+
+    @Column(name = "data_created_task")
+    private LocalDateTime dataCreatedTask;
+
+    @Column(name = "data_updated_task")
+    private LocalDateTime dataUpdatedTask;
 
     @Column(name = "categoria")
     private String categoria;
@@ -58,18 +66,14 @@ public class Task {
     @Column(name = "notes")
     private String notes;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "repeat_task")
-    private String repeatTask;    // questo potremmo averlo in enum
+    private RepeatTask repeatTask;   
 
     @Column(name = "attachment")
     private String attachment;
 
-    @Column(name = "data_created_task")
-    private Data dataCreatedTask;
-
-    @Column(name = "data_updated_task")
-    private Data dataUpdatedTask;
-
+   
 
 
 
@@ -97,6 +101,10 @@ public class Task {
         STARTED,
         WORK_IN_PROGRESS,
         COMPLETED
+    }
+
+    public enum RepeatTask {
+        NONE, DAILY, WEEKLY, MONTHLY
     }
 
 
