@@ -1,4 +1,4 @@
-package com.webtodolist.entity.controller;
+package com.webtodolist.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
