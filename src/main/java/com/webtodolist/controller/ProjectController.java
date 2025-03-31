@@ -1,58 +1,112 @@
 package com.webtodolist.controller;
 
-import com.webtodolist.entity.Project;
-import com.webtodolist.entity.User;
-import com.webtodolist.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.webtodolist.entity.Project;
+import com.webtodolist.entity.User;
+import com.webtodolist.repository.ProjectRepository;
+import com.webtodolist.repository.UserRepository;
+
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/projects")
+@CrossOrigin(origins = "*")
 public class ProjectController {
 
-    private final ProjectService projectService;
-
     @Autowired
-    public ProjectController(ProjectService projectService) {
-        this.projectService = projectService;
+    private ProjectRepository projectRepository;
+    
+    @Autowired
+    private UserRepository userRepository;
+
+    // Get all projects
+    @GetMapping
+    public List<Project> getAllProjects() {
+        return projectRepository.findAll();
     }
 
+    // Get project by ID
     @GetMapping("/{id}")
     public ResponseEntity<Project> getProjectById(@PathVariable Long id) {
-        return projectService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<Project> project = projectRepository.findById(id);
+        return project.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Project>> getProjectsByUserId(@PathVariable Long userId) {
-        List<Project> projects = projectService.findByUserIdOrderByDataCreationProjectDesc(userId);
-        return ResponseEntity.ok(projects);
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<List<Project>> searchProjectsByTitle(@RequestParam String title) {
-        List<Project> projects = projectService.findByTitleContainingIgnoreCase(title);
-        return ResponseEntity.ok(projects);
-    }
-
+    // Create a new project
     @PostMapping
-    public ResponseEntity<Project> createProject(@RequestBody Project project) {
-        Project savedProject = projectService.saveProject(project);
-        return ResponseEntity.ok(savedProject);
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<?> createProject(@RequestBody Project project) {
+        // Set creation timestamp if not provided
+        if (project.getDataCreationProject() == null) {
+            project.setDataCreationProject(LocalDateTime.now());
+        }
+        Project savedProject = projectRepository.save(project);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedProject);
     }
 
+    // Update a project
+    @PutMapping("/{id}")
+    public ResponseEntity<Project> updateProject(@PathVariable Long id, @RequestBody Project projectDetails) {
+        return projectRepository.findById(id)
+                .map(project -> {
+                    // Update timestamp
+                    project.setDataUpdateProject(LocalDateTime.now());
+                    
+                    // Update provided fields
+                    if (projectDetails.getTitle() != null) {
+                        project.setTitle(projectDetails.getTitle());
+                    }
+                    if (projectDetails.getDescription() != null) {
+                        project.setDescription(projectDetails.getDescription());
+                    }
+                    if (projectDetails.getDataDeadline() != null) {
+                        project.setDataDeadline(projectDetails.getDataDeadline());
+                    }
+                    
+                    // Handle project close/completion
+                    if (projectDetails.getDataClosedProject() != null && 
+                        project.getDataClosedProject() == null) {
+                        project.setDataClosedProject(LocalDateTime.now());
+                    }
+                    
+                    Project updatedProject = projectRepository.save(project);
+                    return ResponseEntity.ok(updatedProject);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Delete a project
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
-        projectService.deleteProject(id);
-        return ResponseEntity.noContent().build();
+        return projectRepository.findById(id)
+                .map(project -> {
+                    projectRepository.delete(project);
+                    return ResponseEntity.ok().<Void>build();
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping
-    public ResponseEntity<List<Project>> getAllProjects() {
-        return ResponseEntity.ok(projectService.findAllProjects());
+    // Get projects by user
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Project>> getProjectsByUserId(@PathVariable Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        List<Project> projects = projectRepository.findByUserIdOrderByDataCreationProjectDesc(userId);
+        return ResponseEntity.ok(projects);
+    }
+
+    // Search projects by title
+    @GetMapping("/search")
+    public List<Project> searchProjects(@RequestParam String title) {
+        return projectRepository.findByTitleContainingIgnoreCase(title);
     }
 }

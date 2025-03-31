@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List - Progetti</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <h1>I Miei Progetti</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Attività</a></li>
+                    <li class="active"><a href="projects.html">Progetti</a></li>
+                    <li><a href="#" id="logout-btn">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <div class="project-section">
+            <form id="project-form">
+                <input type="text" id="project-input" placeholder="Nuovo progetto" required>
+                <button type="submit">Crea</button>
+            </form>
+            
+            <div class="search-bar">
+                <input type="text" id="search-project" placeholder="Cerca progetti...">
+            </div>
+            
+            <div id="projects-container">
+                <!-- I progetti verranno inseriti qui dinamicamente -->
+                <div class="no-projects-message">Nessun progetto disponibile. Creane uno nuovo!</div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="scripts/projects.js"></script>
+</body>
+</html>
