@@ -2,9 +2,13 @@ package com.webtodolist.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,7 +30,9 @@ public class Task {
     @Column(name = "descrizione")
     private String descrizione;
 
-    private String status;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING) // Salva il valore dell'enum come stringa nel DB
+    private TaskStatus status;
 
     @Column(name = "data_pending")
     private Data dataPending;
@@ -70,22 +76,28 @@ public class Task {
     // ================== Relazioni ===================
 
 
-    @Column(name = "projects_id")
-    private int projectsId;
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private Project project;
 
-    @Column(name = "user_id")
-    private int userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @Column(name = "assigner_id")
-    private int assignerId;
-
-
-
-
-
+    @ManyToOne
+    @JoinColumn(name = "assigner_id")
+    private User assigner;
 
 
 
+    // =========== ENUM ============
 
-    private boolean completed;
+    public enum TaskStatus {
+        PENDING,
+        STARTED,
+        WORK_IN_PROGRESS,
+        COMPLETED
+    }
+
+
 }
