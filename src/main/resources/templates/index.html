@@ -3,18 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To Do List</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>ToDoList Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .card {
+            margin-bottom: 20px;
+        }
+        .task-completed {
+            background-color: #d4edda;
+        }
+        .task-pending {
+            background-color: #fff3cd;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>To Do List</h1>
-        <form id="task-form">
-            <input type="text" id="task-input" placeholder="Aggiungi un'attività" required>
-            <button type="submit">Aggiungi</button>
-        </form>
-        <ul id="task-list"></ul>
+        <h1 class="text-center mb-4">ToDoList Dashboard</h1>
+
+        <!-- Sezione Utenti -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Utenti</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Ruolo</th>
+                            <th>Nome</th>
+                            <th>Cognome</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table">
+                        <!-- Popolato via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Sezione Progetti -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Progetti</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Titolo</th>
+                            <th>Descrizione</th>
+                            <th>Data Creazione</th>
+                            <th>Deadline</th>
+                            <th>Utente</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projects-table">
+                        <!-- Popolato via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Sezione Task -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Task</h3>
+                <button class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#addTaskModal">Aggiungi Task</button>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Titolo</th>
+                            <th>Status</th>
+                            <th>Data Deadline</th>
+                            <th>Progetto</th>
+                            <th>Utente</th>
+                            <th>Commenti</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tasks-table">
+                        <!-- Popolato via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    <script src="script.js"></script>
+
+    <!-- Modal per Aggiungere Task -->
+    <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addTaskModalLabel">Aggiungi Nuovo Task</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addTaskForm">
+                        <div class="mb-3">
+                            <label for="taskTitle" class="form-label">Titolo</label>
+                            <input type="text" class="form-control" id="taskTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="taskDescription" class="form-label">Descrizione</label>
+                            <textarea class="form-control" id="taskDescription"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="taskStatus" class="form-label">Status</label>
+                            <select class="form-select" id="taskStatus">
+                                <option value="PENDING">Pending</option>
+                                <option value="STARTED">Started</option>
+                                <option value="WORK IN PROGRESS">Work in Progress</option>
+                                <option value="COMPLETED">Completed</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="taskDeadline" class="form-label">Deadline</label>
+                            <input type="datetime-local" class="form-control" id="taskDeadline" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="taskProject" class="form-label">Progetto</label>
+                            <select class="form-select" id="taskProject">
+                                <!-- Popolato via JS -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="taskUser" class="form-label">Utente</label>
+                            <select class="form-select" id="taskUser">
+                                <!-- Popolato via JS -->
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                    <button type="button" class="btn btn-primary" onclick="saveTask()">Salva</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS e script personalizzato -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Dati statici basati sul database fornito
+        const users = [
+            { id: 1, username: 'mario.rossi', email: 'mario.rossi@email.com', role: 'USER', nome: 'Mario', cognome: 'Rossi' },
+            { id: 2, username: 'admin', email: 'admin@email.com', role: 'ADMIN', nome: 'Admin', cognome: 'Admin' },
+            { id: 3, username: 'luca.bianchi', email: 'luca.bianchi@email.com', role: 'USER', nome: 'Luca', cognome: 'Bianchi' }
+        ];
+
+        const projects = [
+            { id: 1, title: 'Sito Web Azienda', description: 'Sviluppo sito aziendale', dataCreation: '2025-03-01 10:00', dataDeadline: '2025-04-30 23:59', userId: 1 },
+            { id: 2, title: 'App Mobile', description: 'App per gestione task', dataCreation: '2025-03-10 09:00', dataDeadline: '2025-05-15 23:59', userId: 2 },
+            { id: 3, title: 'Report Mensile', description: 'Report per il team', dataCreation: '2025-03-15 12:00', dataDeadline: '2025-03-31 18:00', userId: 3 }
+        ];
+
+        const tasks = [
+            { id: 1, titolo: 'Progettazione UI', status: 'WORK IN PROGRESS', dataDeadline: '2025-03-20 17:00', projectId: 1, userId: 1, comments: ['Ottimo lavoro sul mockup, aggiungere pulsante login'] },
+            { id: 2, titolo: 'Sviluppo Backend', status: 'STARTED', dataDeadline: '2025-04-01 23:59', projectId: 2, userId: 2, comments: ['API funzionante, testare con frontend'] },
+            { id: 3, titolo: 'Scrittura Report', status: 'COMPLETED', dataDeadline: '2025-03-20 18:00', projectId: 3, userId: 3, comments: ['Aggiungere più dettagli sulle vendite'] }
+        ];
+
+        // Popolamento tabelle
+        function populateUsers() {
+            const tbody = document.getElementById('users-table');
+            users.forEach(user => {
+                const row = `<tr>
+                    <td>${user.id}</td>
+                    <td>${user.username}</td>
+                    <td>${user.email}</td>
+                    <td>${user.role}</td>
+                    <td>${user.nome}</td>
+                    <td>${user.cognome}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function populateProjects() {
+            const tbody = document.getElementById('projects-table');
+            projects.forEach(project => {
+                const user = users.find(u => u.id === project.userId);
+                const row = `<tr>
+                    <td>${project.id}</td>
+                    <td>${project.title}</td>
+                    <td>${project.description}</td>
+                    <td>${project.dataCreation}</td>
+                    <td>${project.dataDeadline}</td>
+                    <td>${user ? user.username : 'N/A'}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function populateTasks() {
+            const tbody = document.getElementById('tasks-table');
+            tasks.forEach(task => {
+                const project = projects.find(p => p.id === task.projectId);
+                const user = users.find(u => u.id === task.userId);
+                const className = task.status === 'COMPLETED' ? 'task-completed' : 'task-pending';
+                const row = `<tr class="${className}">
+                    <td>${task.id}</td>
+                    <td>${task.titolo}</td>
+                    <td>${task.status}</td>
+                    <td>${task.dataDeadline}</td>
+                    <td>${project ? project.title : 'N/A'}</td>
+                    <td>${user ? user.username : 'N/A'}</td>
+                    <td>${task.comments.join(', ')}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Popolamento dropdown nel modal
+        function populateModalDropdowns() {
+            const projectSelect = document.getElementById('taskProject');
+            const userSelect = document.getElementById('taskUser');
+            projects.forEach(project => {
+                projectSelect.innerHTML += `<option value="${project.id}">${project.title}</option>`;
+            });
+            users.forEach(user => {
+                userSelect.innerHTML += `<option value="${user.id}">${user.username}</option>`;
+            });
+        }
+
+        // Funzione per salvare un nuovo task (simulazione)
+        function saveTask() {
+            const titolo = document.getElementById('taskTitle').value;
+            const description = document.getElementById('taskDescription').value;
+            const status = document.getElementById('taskStatus').value;
+            const deadline = document.getElementById('taskDeadline').value;
+            const projectId = document.getElementById('taskProject').value;
+            const userId = document.getElementById('taskUser').value;
+
+            const newTask = {
+                id: tasks.length + 1,
+                titolo,
+                status,
+                dataDeadline: deadline,
+                projectId: parseInt(projectId),
+                userId: parseInt(userId),
+                comments: []
+            };
+            tasks.push(newTask);
+            document.getElementById('tasks-table').innerHTML = '';
+            populateTasks();
+            bootstrap.Modal.getInstance(document.getElementById('addTaskModal')).hide();
+            document.getElementById('addTaskForm').reset();
+        }
+
+        // Inizializzazione
+        populateUsers();
+        populateProjects();
+        populateTasks();
+        populateModalDropdowns();
+    </script>
 </body>
 </html>
