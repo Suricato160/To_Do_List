@@ -28,21 +28,7 @@ public class TaskController {
         return taskRepository.save(task);
     }
 
-    // Aggiorna un'attività esistente
-    @PutMapping("/{id}")
-    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task taskDetails) {
-        Task task = taskRepository.findById(id).orElseThrow(() -> new RuntimeException("Task not found"));
-        task.setDescription(taskDetails.getDescription());
-        task.setCompleted(taskDetails.isCompleted());
-        Task updatedTask = taskRepository.save(task);
-        return ResponseEntity.ok(updatedTask);
-    }
+   
 
-    // Elimina un'attività
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
-        Task task = taskRepository.findById(id).orElseThrow(() -> new RuntimeException("Task not found"));
-        taskRepository.delete(task);
-        return ResponseEntity.noContent().build();
-    }
+  
 }
