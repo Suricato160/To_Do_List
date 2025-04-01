@@ -32,7 +32,7 @@ public class Project {
     @Column(name = "title", nullable = false, length = 45)
     private String title;
     
-    @Column(length = 45)
+    @Column(name = "description",length = 45)
     private String description;
     
     @Column(name = "data_creation_project")
@@ -52,6 +52,6 @@ public class Project {
     private User user;
     
     // Ensure proper initialization for collections to avoid null pointer exceptions
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "projects")
     private List<Task> tasks = new ArrayList<>();
 }

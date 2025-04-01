@@ -24,25 +24,26 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 45)
+    @Column(name ="username", nullable = false, unique = true, length = 45)
     private String username;
 
-    @Column(nullable = false, length = 45)
+    @Column(name = "password",nullable = false, length = 45)
     private String password;
 
-    @Column(nullable = false, unique = true, length = 45)
+    @Column(name = "email",nullable = false, unique = true, length = 45)
     private String email;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "role", nullable = false)
     private UserRole role;
 
-    @Column(length = 45)
+    @Column(name = "nome", length = 45)
     private String nome;
 
-    @Column(length = 45)
+    @Column(name= "cognome", length = 45)
     private String cognome;
 
     @Column(name = "mansione", length = 45)
@@ -52,13 +53,13 @@ public class User {
 
     // ================ relazioni ================
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "users")
     private List<Project> projects;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "users")
     private List<Task> tasks;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "users")
     private List<Comment> comments;
 
     // Enum for user roles
