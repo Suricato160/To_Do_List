@@ -16,14 +16,21 @@ public class HomeController {
     public HomeController(UserService userService) {
         this.userService = userService;
     }
+    
+    @GetMapping("/")
+    public String home(Model model) {
+        return "home";
+    }
 
     @GetMapping("/login")
-    public String login() {
+    public String login(Model model) {
+        model.addAttribute("user", new User());
         return "login";
     }
 
     @GetMapping("/register")
-    public String register() {
+    public String register(Model model) {
+        model.addAttribute("user", new User());
         return "register";
     }
 
