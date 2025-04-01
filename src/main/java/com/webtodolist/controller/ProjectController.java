@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,10 +33,9 @@ public class ProjectController {
     private UserRepository userRepository;
     
     @GetMapping
-    public String getAllProjects(Model model) {
-        // In a real application with authentication, you would get the current user
-        // For now, let's use a hardcoded user ID (1) or get the first user as example
-        Optional<User> currentUser = userRepository.findById(1L);
+    public String getAllProjects(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        // Ottieni l'utente autenticato
+        Optional<User> currentUser = userRepository.findByUsername(userDetails.getUsername());
         
         List<Project> projects;
         if (currentUser.isPresent()) {
@@ -49,7 +50,7 @@ public class ProjectController {
     }
     
     @GetMapping("/{id}")
-    public String getProjectById(@PathVariable("id") Long id, Model model) {
+    public String getProjectById(@PathVariable("id") int id, Model model) {
         Optional<Project> project = projectRepository.findById(id);
         
         if (project.isPresent()) {
@@ -70,29 +71,29 @@ public class ProjectController {
     }
     
     @GetMapping("/new")
-    public String newProjectForm(Model model) {
+    public String newProjectForm(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         model.addAttribute("project", new Project());
-        
-        // In a real application, get the current user from authentication
-        Optional<User> currentUser = userRepository.findById(1L);
+
+        // Ottieni l'utente autenticato
+        Optional<User> currentUser = userRepository.findByUsername(userDetails.getUsername());
         if (currentUser.isPresent()) {
             model.addAttribute("user", currentUser.get());
         }
-        
-        return "projectNew";  // Changed from "project-form" to match the actual template name
+
+        return "projectNew"; // Changed from "project-form" to match the actual template name
     }
-    
+
     @PostMapping("/create")
-    public String createProject(Project project, RedirectAttributes redirectAttributes) {
+    public String createProject(Project project, RedirectAttributes redirectAttributes, @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            // In a real application, get the current user from authentication
-            Optional<User> currentUser = userRepository.findById(1L);
-            
+            // Ottieni l'utente autenticato
+            Optional<User> currentUser = userRepository.findByUsername(userDetails.getUsername());
+
             if (currentUser.isPresent()) {
                 project.setUser(currentUser.get());
                 project.setDataCreationProject(LocalDateTime.now());
                 projectRepository.save(project);
-                
+
                 redirectAttributes.addFlashAttribute("successMessage", "Progetto creato con successo!");
             } else {
                 redirectAttributes.addFlashAttribute("errorMessage", "Utente non trovato. Impossibile creare il progetto.");
@@ -100,7 +101,7 @@ public class ProjectController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Errore durante la creazione del progetto: " + e.getMessage());
         }
-        
+
         return "redirect:/projects";
     }
     
