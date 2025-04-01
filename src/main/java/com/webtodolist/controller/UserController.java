@@ -3,14 +3,16 @@ package com.webtodolist.controller;
 import com.webtodolist.entity.User;
 import com.webtodolist.service.UserService;
 
+import org.springframework.ui.Model;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/users")
+@Controller
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -21,33 +23,39 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return userService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public String getUserById(@PathVariable Long id, Model model) {
+        userService.findById(id).ifPresent(user -> model.addAttribute("user", user));
+        return "user/details";
     }
 
-    @GetMapping("/username/{username}")
-    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
-        return userService.findByUsername(username)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    @GetMapping("/search")
+    public String getUserByUsername(@RequestParam String username, Model model) {
+        userService.findByUsername(username).ifPresent(user -> model.addAttribute("user", user));
+        return "user/details";
+    }
+
+    @GetMapping("/new")
+    public String showCreateUserForm(Model model) {
+        model.addAttribute("user", new User());
+        return "user/form";
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        User savedUser = userService.saveUser(user);
-        return ResponseEntity.ok(savedUser);
+    public String createUser(@ModelAttribute User user) {
+        userService.saveUser(user);
+        return "redirect:/users";
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.findAllUsers());
+    public String getAllUsers(Model model) {
+        List<User> users = userService.findAllUsers();
+        model.addAttribute("users", users);
+        return "user/list";
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    @GetMapping("/delete/{id}")
+    public String deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+        return "redirect:/users";
     }
 }

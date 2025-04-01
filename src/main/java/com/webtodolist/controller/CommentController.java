@@ -3,14 +3,16 @@ package com.webtodolist.controller;
 import com.webtodolist.entity.Comment;
 import com.webtodolist.service.CommentService;
 
+import org.springframework.ui.Model;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
-@RestController
-@RequestMapping("/api/comments")
+@Controller
+@RequestMapping("/comments")
 public class CommentController {
 
     private final CommentService commentService;
@@ -21,42 +23,57 @@ public class CommentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Comment> getCommentById(@PathVariable int id) {
-        return commentService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public String getCommentById(@PathVariable int id, Model model) {
+        commentService.findById(id).ifPresent(comment -> model.addAttribute("comment", comment));
+        return "comment/detail";
     }
 
     @GetMapping("/task/{taskId}")
-    public ResponseEntity<List<Comment>> getCommentsByTaskId(@PathVariable int taskId) {
-        return ResponseEntity.ok(commentService.findByTaskId(taskId));
+    public String getCommentsByTaskId(@PathVariable int taskId, Model model) {
+        model.addAttribute("comments", commentService.findByTaskId(taskId));
+        model.addAttribute("taskId", taskId);
+        return "comment/list";
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Comment>> getCommentsByUserId(@PathVariable int userId) {
-        return ResponseEntity.ok(commentService.findByUserId(userId));
+    public String getCommentsByUserId(@PathVariable int userId, Model model) {
+        model.addAttribute("comments", commentService.findByUserId(userId));
+        model.addAttribute("userId", userId);
+        return "comment/user-comments";
+    }
+
+    @GetMapping("/create")
+    public String showCreateForm(Model model) {
+        model.addAttribute("comment", new Comment());
+        return "comment/form";
     }
 
     @PostMapping
-    public ResponseEntity<Comment> createComment(@RequestBody Comment comment) {
-        Comment savedComment = commentService.saveComment(comment);
-        return ResponseEntity.ok(savedComment);
+    public String createComment(@ModelAttribute Comment comment) {
+        commentService.saveComment(comment);
+        return "redirect:/comments/task/" + comment.getId();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteComment(@PathVariable int id) {
-        commentService.deleteById(id);
-        return ResponseEntity.noContent().build();
+    @GetMapping("/{id}/delete")
+    public String deleteComment(@PathVariable int id) {
+        Comment comment = commentService.findById(id).orElse(null);
+        int taskId = 0;
+        if (comment != null) {
+            taskId = comment.getId();
+            commentService.deleteById(id);
+        }
+        return "redirect:/comments/task/" + taskId;
     }
 
-    @DeleteMapping("/task/{taskId}")
-    public ResponseEntity<Void> deleteCommentsByTaskId(@PathVariable int taskId) {
+    @GetMapping("/task/{taskId}/delete")
+    public String deleteCommentsByTaskId(@PathVariable int taskId) {
         commentService.deleteByTaskId(taskId);
-        return ResponseEntity.noContent().build();
+        return "redirect:/tasks/" + taskId;
     }
 
     @GetMapping
-    public ResponseEntity<List<Comment>> getAllComments() {
-        return ResponseEntity.ok(commentService.findAllComments());
+    public String getAllComments(Model model) {
+        model.addAttribute("comments", commentService.findAllComments());
+        return "comment/all";
     }
 }
