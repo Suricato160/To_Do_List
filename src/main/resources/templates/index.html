@@ -193,6 +193,7 @@
             <a href="#" class="nav-link"><i class="fas fa-cog"></i> Settings</a>
             <a href="#" class="nav-link"><i class="fas fa-question-circle"></i> Help</a>
             <a href="#" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a href="task-list.html" class="nav-link"><i class="fas fa-list"></i> Lista Task</a>
         </nav>
     </div>
 
@@ -229,21 +230,14 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Loop through tasks list if it exists and is not empty -->
-                <tr th:each="task : ${tasks}" th:if="${tasks != null and !tasks.empty}">
-                    <td th:text="${task.id}"></td>
-                    <td th:text="${task.titolo}"></td>
-                    <td th:text="${task.descrizione}"></td>
-                    <td th:text="${task.status}"></td>
-                    <td th:text="${task.completed}"></td>
-                    <td th:text="${task.dataDeadline}"></td>
-                    <td th:text="${task.categoria}"></td>
-                    <td th:text="${task.user != null ? task.user.username : 'Unassigned'}"></td>
-                    <td th:text="${task.dataCreatedTask}"></td>
+                <tr th:each="task : ${tasks}">
+                    <td th:text="${task.id}">ID</td>
+                    <td th:text="${task.titolo}">Titolo</td>
+                    <td th:text="${task.descrizione}">Descrizione</td>
+                    <td th:text="${task.status}">Stato</td>
                 </tr>
-                <!-- Show message if tasks is null or empty -->
                 <tr th:if="${tasks == null or tasks.empty}">
-                    <td colspan="9">No tasks found</td>
+                    <td colspan="4">Nessun task trovato</td>
                 </tr>
             </tbody>
         </table>
