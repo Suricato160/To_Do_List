@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h1>Lista delle Task</h1>
+        <h1 class="mb-4">Lista delle Task</h1>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -16,7 +16,11 @@
                     <th>Titolo</th>
                     <th>Descrizione</th>
                     <th>Stato</th>
-                    <th>Deadline</th>
+                    <th>Completato</th>
+                    <th>Scadenza</th>
+                    <th>Categoria</th>
+                    <th>Assegnato a</th>
+                    <th>Creato il</th>
                 </tr>
             </thead>
             <tbody>
@@ -25,14 +29,15 @@
                     <td th:text="${task.titolo}">Titolo</td>
                     <td th:text="${task.descrizione}">Descrizione</td>
                     <td th:text="${task.status}">Stato</td>
-                    <td th:text="${task.dataDeadline}">Deadline</td>
-                </tr>
-                <tr th:if="${tasks == null or tasks.empty}">
-                    <td colspan="5">Nessuna task trovata</td>
+                    <td th:text="${task.completed}">Completato</td>
+                    <td th:text="${task.dataDeadline}">Scadenza</td>
+                    <td th:text="${task.categoria}">Categoria</td>
+                    <td th:text="${task.user != null ? task.user.username : 'N/A'}">Assegnato a</td> <!-- Adjust based on User entity -->
+                    <td th:text="${task.dataCreatedTask}">Creato il</td>
                 </tr>
             </tbody>
         </table>
-        <a href="/index" class="btn btn-primary">Torna alla Dashboard</a>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
