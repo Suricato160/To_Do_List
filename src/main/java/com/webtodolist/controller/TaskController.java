@@ -1,53 +1,81 @@
 package com.webtodolist.controller;
 
 import com.webtodolist.repository.TaskRepository;
+import com.webtodolist.service.UserService;
+import com.webtodolist.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-<<<<<<< HEAD
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import com.webtodolist.entity.Task;
+import com.webtodolist.entity.User;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-=======
-import org.springframework.web.bind.annotation.GetMapping;
-import java.util.Collections;
->>>>>>> abccd9115538223eb2da639e009fff9e1e76df67
 
 @Controller
 public class TaskController {
 
     @Autowired
     private TaskRepository taskRepository;
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private TaskService taskService;
 
     @GetMapping("/tasks")
-    public String showTaskList(Model model) {
-        // Always add tasks attribute, default to empty list if null
-        model.addAttribute("tasks", taskRepository.findAll() != null ? 
-            taskRepository.findAll() : Collections.emptyList());
-        return "index"; // Refers to index.html template
+    public String showAllTasks(Model model) {
+        List<Task> tasks = taskRepository.findAll();
+        model.addAttribute("tasks", tasks != null ? tasks : Collections.emptyList());
+        return "tasks"; // Points to tasks.html template
     }
-
-    @GetMapping("/create")
-    public String showCreateForm(@RequestParam Long userId, Model model) {
-        Task task = new Task();
+    
+    @GetMapping("/tasks/user/{userId}")
+    public String showUserTasks(@PathVariable Long userId, Model model) {
         Optional<User> userOptional = userService.findById(userId);
         if (userOptional.isPresent()) {
-            task.setUser(userOptional.get());
-            model.addAttribute("task", task);
-            model.addAttribute("userId", userId);
-            return "task-form";
+            User user = userOptional.get();
+            List<Task> tasks = taskService.findByUserId(user.getId());
+            model.addAttribute("tasks", tasks);
+            model.addAttribute("user", user);
+            return "user-tasks"; // Points to user-tasks.html template
         } else {
-            return "redirect:/tasks/";
+            return "redirect:/tasks";
         }
     }
 
-    @PostMapping("/save")
+    @GetMapping("/tasks/create")
+    public String showCreateForm(@RequestParam Long userId, Model model) {
+        Optional<User> userOptional = userService.findById(userId);
+        if (userOptional.isPresent()) {
+            Task task = new Task();
+            task.setUser(userOptional.get());
+            model.addAttribute("task", task);
+            model.addAttribute("userId", userId);
+            model.addAttribute("statuses", Task.TaskStatus.values());
+            model.addAttribute("isEdit", false);
+            return "task-form";
+        } else {
+            return "redirect:/tasks";
+        }
+    }
+
+    @PostMapping("/tasks/save")
     public String saveTask(@ModelAttribute Task task, @RequestParam Long userId, RedirectAttributes redirectAttributes) {
         Optional<User> userOptional = userService.findById(userId);
         if (userOptional.isPresent()) {
-            task.setUser(userOptional.get());
+            User user = userOptional.get();
+            task.setUser(user);
+            if (task.getStatus() == null) {
+                task.setStatus(Task.TaskStatus.PENDING);
+            }
             taskService.saveTask(task);
             redirectAttributes.addFlashAttribute("successMessage", "Task saved successfully!");
         } else {
@@ -56,20 +84,22 @@ public class TaskController {
         return "redirect:/tasks/user/" + userId;
     }
 
-    @GetMapping("/edit/{id}")
+    @GetMapping("/tasks/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
         Optional<Task> taskOptional = taskService.findById(id);
         if (taskOptional.isPresent()) {
             Task task = taskOptional.get();
             model.addAttribute("task", task);
             model.addAttribute("userId", task.getUser().getId());
+            model.addAttribute("statuses", Task.TaskStatus.values());
+            model.addAttribute("isEdit", true);
             return "task-form";
         } else {
-            return "redirect:/tasks/";
+            return "redirect:/tasks";
         }
     }
 
-    @GetMapping("/delete/{id}")
+    @GetMapping("/tasks/delete/{id}")
     public String deleteTask(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         Optional<Task> taskOptional = taskService.findById(id);
         if (taskOptional.isPresent()) {
@@ -80,11 +110,11 @@ public class TaskController {
             return "redirect:/tasks/user/" + userId;
         } else {
             redirectAttributes.addFlashAttribute("errorMessage", "Task not found!");
-            return "redirect:/tasks/";
+            return "redirect:/tasks";
         }
     }
 
-    @GetMapping("/updateStatus/{id}")
+    @GetMapping("/tasks/updateStatus/{id}")
     public String updateTaskStatus(@PathVariable Long id, @RequestParam Task.TaskStatus status, RedirectAttributes redirectAttributes) {
         Optional<Task> taskOptional = taskService.findById(id);
         if (taskOptional.isPresent()) {
@@ -96,7 +126,7 @@ public class TaskController {
             return "redirect:/tasks/user/" + userId;
         } else {
             redirectAttributes.addFlashAttribute("errorMessage", "Task not found!");
-            return "redirect:/tasks/";
+            return "redirect:/tasks";
         }
     }
 }
