@@ -1,23 +1,22 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToDoList Dashboard</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome for icons -->
+    <!-- Font Awesome per le icone -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
 </head>
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="profile">
             <img src="https://via.placeholder.com/80" alt="Profile Picture">
-            <h5>Sundar Gurung</h5>
-            <p>sundargurung360@gmail.com</p>
+            <h5 th:text="${user != null ? user.nome + ' ' + user.cognome : 'Utente'}"></h5>
+            <p th:text="${user != null ? user.email : 'utente@email.com'}"></p>
         </div>
         <nav>
             <a href="#" class="nav-link active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
@@ -30,96 +29,66 @@
         </nav>
     </div>
 
-    <!-- Main Content -->
+    <!-- Contenuto Principale -->
     <div class="main-content">
-        <!-- Header -->
+        <!-- Intestazione -->
         <div class="header">
-            <input type="text" class="search-bar" placeholder="Search your task here...">
+            <input type="text" class="search-bar" placeholder="Cerca le tue attività qui...">
             <div class="icons">
                 <i class="fas fa-search"></i>
                 <i class="fas fa-bell"></i>
                 <i class="fas fa-calendar-alt"></i>
-                <span>Tuesday 20/06/2023</span>
+                <span id="current-date" th:text="${#dates.format(new java.util.Date(), 'EEEE dd/MM/yyyy')}"></span>
             </div>
         </div>
 
-        <!-- Welcome Message -->
+        <!-- Messaggio di Benvenuto -->
         <div class="welcome-message">
-            Welcome back, Sundar <span class="emoji">👋</span>
+            Bentornato, <span id="welcome-name" th:text="${user != null ? user.nome : 'Utente'}"></span> <span class="emoji">👋</span>
         </div>
 
-        <!-- To-Do Section -->
-        <div class="row">
-            <div class="col-md-6">
+        <!-- Sezione To-Do -->
+        <div class="row" id="todo-tasks">
+            <div class="col-md-6" th:each="task : ${tasks}" th:if="${task.status != 'COMPLETED'}">
                 <div class="task-card">
                     <div class="task-header">
-                        <h6>Attend Nichal's Birthday Party</h6>
-                        <span class="priority">Priority: Moderate</span>
+                        <h6 th:text="${task.titolo}"></h6>
+                        <span class="priority">Priorità: Moderata</span>
                     </div>
-                    <p class="task-details">Buy a gift on the way and pick up the cake from the bakery. [6 PM | Fresh Elements]...</p>
-                    <p class="task-status">Status: Not Started</p>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="task-card">
-                    <div class="task-header">
-                        <h6>Landing Page Design for TravelDays</h6>
-                        <span class="priority">Priority: Moderate</span>
-                    </div>
-                    <p class="task-details">Get the work done by EOD and discuss with client before leaving. [4 PM | Meeting Room]</p>
-                    <p class="task-status">Status: In Progress</p>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="task-card">
-                    <div class="task-header">
-                        <h6>Presentation on Final Product</h6>
-                        <span class="priority">Priority: Moderate</span>
-                    </div>
-                    <p class="task-details">Make sure everything is functioning and all the necessities are properly met. Prepare the team and the documents ready for...</p>
-                    <p class="task-status">Status: In Progress</p>
+                    <p class="task-details" th:text="${task.descrizione}"></p>
+                    <p class="task-status" th:text="'Stato: ' + ${task.status}"></p>
                 </div>
             </div>
         </div>
 
-        <!-- Task Status -->
+        <!-- Stato delle Attività -->
         <div class="task-card">
-            <h6>Task Status</h6>
+            <h6>Stato delle Attività</h6>
             <div class="progress-circles">
                 <div class="progress-circle">
-                    <div class="circle completed-circle">84%</div>
-                    <p>Completed</p>
+                    <div class="circle completed-circle" th:text="${completedPercentage != null ? completedPercentage : 0} + '%'"></div>
+                    <p>Completate</p>
                 </div>
                 <div class="progress-circle">
-                    <div class="circle in-progress-circle">46%</div>
-                    <p>In Progress</p>
+                    <div class="circle in-progress-circle" th:text="${inProgressPercentage != null ? inProgressPercentage : 0} + '%'"></div>
+                    <p>In Corso</p>
                 </div>
                 <div class="progress-circle">
-                    <div class="circle not-started-circle">13%</div>
-                    <p>Not Started</p>
+                    <div class="circle not-started-circle" th:text="${notStartedPercentage != null ? notStartedPercentage : 0} + '%'"></div>
+                    <p>Non Iniziate</p>
                 </div>
             </div>
         </div>
 
-        <!-- Completed Tasks -->
-        <div class="row">
-            <div class="col-md-6">
+        <!-- Attività Completate -->
+        <div class="row" id="completed-tasks">
+            <div class="col-md-6" th:each="task : ${tasks}" th:if="${task.status == 'COMPLETED'}">
                 <div class="completed-task">
-                    <img src="https://via.placeholder.com/50" alt="Task Image">
+                    <img src="https://via.placeholder.com/50" alt="Immagine Attività">
                     <div class="task-info">
-                        <h6>Walk the dog</h6>
-                        <p>Take the dog to the park and bring treats as well.</p>
-                        <p class="status">Status: Completed 2 days ago</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="completed-task">
-                    <img src="https://via.placeholder.com/50" alt="Task Image">
-                    <div class="task-info">
-                        <h6>Conduct meeting</h6>
-                        <p>Meet with the client and finalize the requirements.</p>
-                        <p class="status">Status: Completed 2 days ago</p>
+                        <h6 th:text="${task.titolo}"></h6>
+                        <p th:text="${task.descrizione}"></p>
+                        <p class="status">Stato: Completata</p>
                     </div>
                 </div>
             </div>
@@ -128,5 +97,6 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/scripts/scripts.js"></script>
 </body>
 </html>

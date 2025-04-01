@@ -1,12 +1,16 @@
 LISTA DI COSE DA FARE
 ------ front end -----
+- Creare un template Thymeleaf index.html come homepage/dashboard ✓
+- Migliorare la compatibilità mobile delle pagine
 
 ------ back end ------
-
-
+- Correggere gestione utenti nel controller per le pagine Thymeleaf ✓
+- Implementare autenticazione basata su sessioni/JWT
 
 
 ================ ADRIANO ==============
 security conf
 
 ================ OSAMA ==============
+- Sistemato problema "Exception evaluating SpringEL expression: 'user.nome'" ✓
+- Creato HomeController per pagine di navigazione base ✓
