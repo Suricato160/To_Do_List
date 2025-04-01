@@ -26,8 +26,13 @@ public class HomeController {
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String showLoginPage() {
         return "login";
+    }
+
+    @GetMapping("/access-denied")
+    public String showAccessDenied() {
+        return "access-denied"; // Create this template if needed
     }
 
     @GetMapping("/register")
