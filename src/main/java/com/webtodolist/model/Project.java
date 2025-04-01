@@ -2,7 +2,7 @@ package com.webtodolist.model;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+import java.util.ArrayList;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,6 +50,7 @@ public class Project {
     @JoinColumn(name = "user_id")
     private User user;
     
+    // Ensure proper initialization for collections to avoid null pointer exceptions
     @OneToMany(mappedBy = "project")
-    private List<Task> tasks;
+    private List<Task> tasks = new ArrayList<>();
 }

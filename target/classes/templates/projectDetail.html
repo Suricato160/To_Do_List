@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List - Dettaglio Progetto</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="profile">
+            <img src="https://via.placeholder.com/80" alt="Profile Picture">
+            <h5 th:text="${user != null ? user.username : 'Utente'}">Utente</h5>
+            <p th:text="${user != null ? user.email : 'email@example.com'}">email@example.com</p>
+        </div>
+        <nav>
+            <a href="/index" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="/tasks" class="nav-link"><i class="fas fa-tasks"></i> Tutte le Task</a>
+            <a href="/projects" class="nav-link active"><i class="fas fa-project-diagram"></i> Progetti</a>
+            <a href="/task-list" class="nav-link"><i class="fas fa-list"></i> Lista Task</a>
+            <a href="/categories" class="nav-link"><i class="fas fa-tag"></i> Categorie</a>
+            <a href="/settings" class="nav-link"><i class="fas fa-cog"></i> Impostazioni</a>
+            <a href="/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header mb-4">
+            <div class="d-flex align-items-center">
+                <a href="/projects" class="btn btn-outline-secondary me-3">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h2 th:text="${project.title}">Dettaglio Progetto</h2>
+                <span class="badge ms-3" th:classappend="${project.dataClosedProject != null ? 'bg-success' : 'bg-primary'}"
+                      th:text="${project.dataClosedProject != null ? 'Completato' : 'In corso'}">In Corso</span>
+            </div>
+        </div>
+
+        <!-- Project Details -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Dettagli Progetto</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text" th:text="${project.description}">Descrizione del progetto...</p>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <p><strong>Data Creazione:</strong> <span th:text="${#temporals.format(project.dataCreationProject, 'dd/MM/yyyy HH:mm')}">01/01/2023</span></p>
+                                <p><strong>Ultima Modifica:</strong> <span th:text="${project.dataUpdateProject != null ? #temporals.format(project.dataUpdateProject, 'dd/MM/yyyy HH:mm') : 'N/A'}">N/A</span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Scadenza:</strong> <span th:text="${project.dataDeadline != null ? #temporals.format(project.dataDeadline, 'dd/MM/yyyy HH:mm') : 'Nessuna scadenza'}">01/01/2024</span></p>
+                                <p><strong>Completato il:</strong> <span th:text="${project.dataClosedProject != null ? #temporals.format(project.dataClosedProject, 'dd/MM/yyyy HH:mm') : 'Non completato'}">N/A</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Statistiche</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <h1 th:text="${project.tasks != null ? project.tasks.size() : 0}">0</h1>
+                            <p>Attività Totali</p>
+                        </div>
+                        
+                        <div class="progress mb-3">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" 
+                                 th:style="'width: ' + ${project.tasks != null && !project.tasks.isEmpty() ? #lists.size(project.tasks.?[completed == true]) * 100 / project.tasks.size() : 0} + '%'" 
+                                 th:text="${project.tasks != null && !project.tasks.isEmpty() ? #lists.size(project.tasks.?[completed == true]) * 100 / project.tasks.size() + '%' : '0%'}">25%</div>
+                        </div>
+                        
+                        <p class="text-center">Completamento</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Tasks -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Attività del Progetto</h5>
+                <a href="#" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Nuova Attività</a>
+            </div>
+            <div class="card-body">
+                <div th:if="${project.tasks != null && !project.tasks.isEmpty()}" class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Titolo</th>
+                                <th>Stato</th>
+                                <th>Scadenza</th>
+                                <th>Assegnato a</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="task : ${project.tasks}">
+                                <td th:text="${task.titolo}">Titolo Task</td>
+                                <td>
+                                    <span class="badge" 
+                                          th:classappend="${task.status == 'COMPLETED' ? 'bg-success' : (task.status == 'WORK_IN_PROGRESS' ? 'bg-warning' : 'bg-primary')}" 
+                                          th:text="${task.status}">PENDING</span>
+                                </td>
+                                <td th:text="${task.dataDeadline != null ? #temporals.format(task.dataDeadline, 'dd/MM/yyyy') : 'N/A'}">01/01/2024</td>
+                                <td th:text="${task.user != null ? task.user.username : 'Non assegnato'}">Utente</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="#" class="btn btn-outline-primary"><i class="fas fa-eye"></i></a>
+                                        <a href="#" class="btn btn-outline-warning"><i class="fas fa-edit"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div th:if="${project.tasks == null || project.tasks.isEmpty()}" class="text-center py-4">
+                    <p>Nessuna attività presente per questo progetto.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
