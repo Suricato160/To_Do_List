@@ -56,9 +56,9 @@ CREATE TABLE IF NOT EXISTS `ToDoList`.`projects` (
   `data_closed_project` DATETIME NULL DEFAULT NULL,
   `User_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_projects_User_idx` (`User_id` ASC) VISIBLE,
+  INDEX `fk_projects_user_idx` (`user_id` ASC) VISIBLE,
   CONSTRAINT `fk_projects_User`
-    FOREIGN KEY (`User_id`)
+    FOREIGN KEY (`user_id`)
     REFERENCES `ToDoList`.`users` (`id`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS `ToDoList`.`tasks` (
   `projects_id` INT NOT NULL,
   `user_id` INT NOT NULL,
   `assigner_id` INT NOT NULL,
-  `completed` TINYINT NOT NULL DEFAULT '0',
+  `completed` BIT(1) NOT NULL DEFAULT b'0',
   PRIMARY KEY (`id`),
   INDEX `fk_Task_projects1_idx` (`projects_id` ASC) VISIBLE,
   INDEX `fk_Task_User1_idx` (`user_id` ASC) VISIBLE,
@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS `ToDoList`.`comments` (
   `Task_id` INT NOT NULL,
   `user_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_comments_Task1_idx` (`Task_id` ASC) VISIBLE,
+  INDEX `fk_comments_Task1_idx` (`task_id` ASC) VISIBLE,
   INDEX `fk_comments_user1_idx` (`user_id` ASC) VISIBLE,
   CONSTRAINT `fk_comments_Task1`
     FOREIGN KEY (`Task_id`)

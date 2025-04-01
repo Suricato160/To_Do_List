@@ -27,7 +27,7 @@ public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private int id;
     
     @Column(name = "title", nullable = false, length = 45)
     private String title;
@@ -52,6 +52,6 @@ public class Project {
     private User user;
     
     // Ensure proper initialization for collections to avoid null pointer exceptions
-    @OneToMany(mappedBy = "projects")
+    @OneToMany(mappedBy = "project")
     private List<Task> tasks = new ArrayList<>();
 }

@@ -1,5 +1,6 @@
 package com.webtodolist.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -25,7 +26,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private int id;
 
     @Column(name ="username", nullable = false, unique = true, length = 45)
     private String username;
@@ -53,14 +54,14 @@ public class User {
 
     // ================ relazioni ================
 
-    @OneToMany(mappedBy = "users")
-    private List<Project> projects;
+   @OneToMany(mappedBy = "user") // Correzione: da "users" a "user"
+    private List<Project> projects = new ArrayList<>();
 
-    @OneToMany(mappedBy = "users")
-    private List<Task> tasks;
+    @OneToMany(mappedBy = "user") // Correzione: da "users" a "user"
+    private List<Task> tasks = new ArrayList<>();
 
-    @OneToMany(mappedBy = "users")
-    private List<Comment> comments;
+    @OneToMany(mappedBy = "user") // Correzione: da "users" a "user"
+    private List<Comment> comments = new ArrayList<>();
 
     // Enum for user roles
     public enum UserRole {

@@ -28,7 +28,7 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private int id;
 
     @Column(name = "titolo")
     private String titolo;
@@ -85,7 +85,7 @@ public class Task {
     // ================== Relazioni ===================
 
     @ManyToOne
-    @JoinColumn(name = "project_id")
+    @JoinColumn(name = "projects_id") 
     private Project project;
 
     @ManyToOne
