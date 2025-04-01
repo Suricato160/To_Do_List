@@ -3,7 +3,6 @@ package com.webtodolist.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.webtodolist.entity.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

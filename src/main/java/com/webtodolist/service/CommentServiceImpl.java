@@ -2,7 +2,6 @@ package com.webtodolist.service;
 
 import com.webtodolist.entity.Comment;
 import com.webtodolist.repository.CommentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +12,6 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
 
-    @Autowired
     public CommentServiceImpl(CommentRepository commentRepository) {
         this.commentRepository = commentRepository;
     }
