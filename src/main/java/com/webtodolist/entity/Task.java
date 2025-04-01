@@ -1,5 +1,7 @@
 package com.webtodolist.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -38,19 +40,19 @@ public class Task {
     private boolean completed;
 
     @Column(name = "data_pending")
-    private Data dataPending;
+    private LocalDateTime dataPending;
 
     @Column(name = "data_started")
-    private Data dataStarted;
+    private LocalDateTime dataStarted;
 
     @Column(name = "data_progress")
-    private Data dataProgress;
+    private LocalDateTime dataProgress;
 
     @Column(name = "data_completed")
-    private Data dataCompleted;
+    private LocalDateTime dataCompleted;
 
     @Column(name = "data_deadline")
-    private Data dataDeadline;
+    private LocalDateTime dataDeadline;
 
     @Column(name = "categoria")
     private String categoria;
@@ -68,10 +70,10 @@ public class Task {
     private String attachment;
 
     @Column(name = "data_created_task")
-    private Data dataCreatedTask;
+    private LocalDateTime dataCreatedTask;
 
     @Column(name = "data_updated_task")
-    private Data dataUpdatedTask;
+    private LocalDateTime dataUpdatedTask;
 
 
 

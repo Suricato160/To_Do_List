@@ -2,7 +2,6 @@ package com.webtodolist.controller;
 
 import com.webtodolist.entity.User;
 import com.webtodolist.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +13,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @Autowired
+    
     public UserController(UserService userService) {
         this.userService = userService;
     }

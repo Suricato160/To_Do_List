@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.webtodolist.entity.Comment;
 
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
-    List<Comment> findByIdTask(int taskId);
+    List<Comment> findByTaskId(int taskId);
     
-    List<Comment> findByIdUser(int userId);
+    List<Comment> findByUserId(int userId);
     
-    void deleteByIdTask(int taskId);
+    void deleteByTaskId(int taskId);
 }

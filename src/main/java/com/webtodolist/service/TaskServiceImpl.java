@@ -3,7 +3,6 @@ package com.webtodolist.service;
 import com.webtodolist.entity.Task;
 import com.webtodolist.entity.Task.TaskStatus;
 import com.webtodolist.repository.TaskRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,7 +13,6 @@ public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
 
-    @Autowired
     public TaskServiceImpl(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }

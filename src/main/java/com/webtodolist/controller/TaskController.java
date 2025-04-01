@@ -1,9 +1,7 @@
 package com.webtodolist.controller;
 
 import com.webtodolist.entity.Task;
-import com.webtodolist.entity.Task.TaskStatus;
 import com.webtodolist.service.TaskService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +13,6 @@ public class TaskController {
 
     private final TaskService taskService;
 
-    @Autowired
     public TaskController(TaskService taskService) {
         this.taskService = taskService;
     }

@@ -1,6 +1,6 @@
 package com.webtodolist.entity;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,7 +28,7 @@ public class Comment {
     private String text;
 
     @Column(name = "data_comment")
-    private Date dataComment;
+    private LocalDateTime dataComment;
 
 
     // ======== relazioni =======
