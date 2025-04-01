@@ -2,8 +2,14 @@ package com.webtodolist.controller;
 
 import com.webtodolist.entity.User;
 import com.webtodolist.service.UserService;
+<<<<<<< HEAD
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+=======
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+>>>>>>> abccd9115538223eb2da639e009fff9e1e76df67
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,7 +19,12 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+<<<<<<< HEAD
     
+=======
+
+    @Autowired
+>>>>>>> abccd9115538223eb2da639e009fff9e1e76df67
     public UserController(UserService userService) {
         this.userService = userService;
     }
