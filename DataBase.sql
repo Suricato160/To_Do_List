@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `ToDoList`.`task` (
   `id` INT NOT NULL,
   `titolo` VARCHAR(45) NULL,
   `descrizione` VARCHAR(45) NULL,
-  `status` ENUM('PENDING', 'STARTED', 'WORK IN PROGRESS', 'COMPLETED') NULL DEFAULT 'PENDING',
+  `status` ENUM('PENDING', 'STARTED', 'WORK_IN_PROGRESS', 'COMPLETED') NULL DEFAULT 'PENDING',
   `data_pending` DATETIME NULL,
   `data_started` DATETIME NULL,
   `data_progress` DATETIME NULL,
@@ -101,6 +101,7 @@ CREATE TABLE IF NOT EXISTS `ToDoList`.`task` (
   `projects_id` INT NOT NULL,
   `user_id` INT NOT NULL,
   `assigner_id` INT NOT NULL,
+  `completed` TINYINT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `fk_Task_projects1_idx` (`projects_id` ASC) VISIBLE,
   INDEX `fk_Task_User1_idx` (`user_id` ASC) VISIBLE,
@@ -173,6 +174,7 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
 
 
 
