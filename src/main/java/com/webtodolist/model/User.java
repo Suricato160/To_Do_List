@@ -45,6 +45,13 @@ public class User {
     @Column(length = 45)
     private String cognome;
 
+    @Column(name = "mansione", length = 45)
+    private String mansione;
+
+
+
+    // ================ relazioni ================
+
     @OneToMany(mappedBy = "user")
     private List<Project> projects;
 
