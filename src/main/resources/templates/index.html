@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -214,41 +214,55 @@
             Welcome back, Sundar <span class="emoji">👋</span>
         </div>
 
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Completed</th>
+                    <th>Deadline</th>
+                    <th>Category</th>
+                    <th>Assigned To</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop through tasks list if it exists and is not empty -->
+                <tr th:each="task : ${tasks}" th:if="${tasks != null and !tasks.empty}">
+                    <td th:text="${task.id}"></td>
+                    <td th:text="${task.titolo}"></td>
+                    <td th:text="${task.descrizione}"></td>
+                    <td th:text="${task.status}"></td>
+                    <td th:text="${task.completed}"></td>
+                    <td th:text="${task.dataDeadline}"></td>
+                    <td th:text="${task.categoria}"></td>
+                    <td th:text="${task.user != null ? task.user.username : 'Unassigned'}"></td>
+                    <td th:text="${task.dataCreatedTask}"></td>
+                </tr>
+                <!-- Show message if tasks is null or empty -->
+                <tr th:if="${tasks == null or tasks.empty}">
+                    <td colspan="9">No tasks found</td>
+                </tr>
+            </tbody>
+        </table>
+
         <!-- To-Do Section -->
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-6" th:each="task : ${tasks}">
                 <div class="task-card">
                     <div class="task-header">
-                        <h6>Attend Nichal's Birthday Party</h6>
+                        <h6 th:text="${task.titolo}">Task Title</h6>
                         <span class="priority">Priority: Moderate</span>
                     </div>
-                    <p class="task-details">Buy a gift on the way and pick up the cake from the bakery. [6 PM | Fresh Elements]...</p>
-                    <p class="task-status">Status: Not Started</p>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="task-card">
-                    <div class="task-header">
-                        <h6>Landing Page Design for TravelDays</h6>
-                        <span class="priority">Priority: Moderate</span>
-                    </div>
-                    <p class="task-details">Get the work done by EOD and discuss with client before leaving. [4 PM | Meeting Room]</p>
-                    <p class="task-status">Status: In Progress</p>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="task-card">
-                    <div class="task-header">
-                        <h6>Presentation on Final Product</h6>
-                        <span class="priority">Priority: Moderate</span>
-                    </div>
-                    <p class="task-details">Make sure everything is functioning and all the necessities are properly met. Prepare the team and the documents ready for...</p>
-                    <p class="task-status">Status: In Progress</p>
+                    <p class="task-details" th:text="${task.descrizione}">Task Description</p>
+                    <p class="task-status" th:text="'Status: ' + ${task.status}">Status: Not Started</p>
                 </div>
             </div>
         </div>
 
-        <!-- Task Status -->
+        <!-- Task Status (Static for now) -->
         <div class="task-card">
             <h6>Task Status</h6>
             <div class="progress-circles">
@@ -267,7 +281,7 @@
             </div>
         </div>
 
-        <!-- Completed Tasks -->
+        <!-- Completed Tasks (Static for now) -->
         <div class="row">
             <div class="col-md-6">
                 <div class="completed-task">
