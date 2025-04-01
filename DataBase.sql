@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `ToDoList`.`user` (
   `mansione` VARCHAR(45) NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 52
+AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8mb3;
 
 
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `ToDoList`.`projects` (
     FOREIGN KEY (`User_id`)
     REFERENCES `ToDoList`.`user` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 6
+AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8mb3;
 
 
@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS `ToDoList`.`task` (
     FOREIGN KEY (`assigner_id`)
     REFERENCES `ToDoList`.`user` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 91
+AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8mb3;
 
 
@@ -339,3 +339,8 @@ INSERT INTO `ToDoList`.`comments` (data_comment, text, Task_id, user_id) VALUES
 ('2025-04-12 15:00:00', 'Script da rifinire per durata.', 75, 14), -- Sofia (Copywriter)
 ('2025-04-14 11:00:00', 'Teaser pronto per i social.', 76, 20), -- Marco (Social Media)
 ('2025-04-19 12:00:00', 'Player testato, piccoli bug.', 77, 26); -- Giulia (Frontend)
+
+
+
+
+Error Code: 1452. Cannot add or update a child row: a foreign key constraint fails (`todolist`.`projects`, CONSTRAINT `fk_projects_User` FOREIGN KEY (`User_id`) REFERENCES `user` (`id`))
