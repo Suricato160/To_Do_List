@@ -1,43 +1,117 @@
 <!DOCTYPE html>
-<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<html lang="it" xmlns:th="http://www.thymeleaf.org" th:with="TaskStatus=com.webtodolist.entity.Task.TaskStatus">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista Task</title>
+    <title>Lista task</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
+
 <body>
-    <div class="container mt-5">
-        <h1 class="mb-4">Lista delle Task</h1>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Titolo</th>
-                    <th>Descrizione</th>
-                    <th>Stato</th>
-                    <th>Completato</th>
-                    <th>Scadenza</th>
-                    <th>Categoria</th>
-                    <th>Assegnato a</th>
-                    <th>Creato il</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="task : ${tasks}">
-                    <td th:text="${task.id}">ID</td>
-                    <td th:text="${task.titolo}">Titolo</td>
-                    <td th:text="${task.descrizione}">Descrizione</td>
-                    <td th:text="${task.status}">Stato</td>
-                    <td th:text="${task.completed}">Completato</td>
-                    <td th:text="${task.dataDeadline}">Scadenza</td>
-                    <td th:text="${task.categoria}">Categoria</td>
-                    <td th:text="${task.user != null ? task.user.username : 'N/A'}">Assegnato a</td> <!-- Adjust based on User entity -->
-                    <td th:text="${task.dataCreatedTask}">Creato il</td>
-                </tr>
-            </tbody>
-        </table>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="profile">
+            <img src="https://via.placeholder.com/80" alt="Profile Picture">
+            <h5 th:text="${user != null ? user.username : 'Utente'}">Utente</h5>
+            <p th:text="${user != null ? user.email : 'email@example.com'}">email@example.com</p>
+        </div>
+        <nav>
+            <a href="/index" class="nav-link active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="/task-list" class="nav-link"><i class="fas fa-tasks"></i> Tutte le Task</a>
+            <a href="/projects" class="nav-link"><i class="fas fa-project-diagram"></i> Progetti</a>
+            <a href="/categories" class="nav-link"><i class="fas fa-tag"></i> Categorie</a>
+            <a href="/settings" class="nav-link"><i class="fas fa-cog"></i> Impostazioni</a>
+            <a href="/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!--====================================================================================  -->
+
+ <!-- Main Content -->
+ <div class="main-content">
+    <!-- Header -->
+    <div class="header">
+        <input type="text" class="search-bar" placeholder="Cerca tasks...">
+        <div class="icons">
+            <i class="fas fa-search"></i>
+            <i class="fas fa-bell"></i>
+            <i class="fas fa-calendar-alt"></i>
+            <span th:text="${#temporals.format(#temporals.createNow(), 'EEEE dd/MM/yyyy')}">Martedì
+                20/06/2023</span>
+        </div>
+    </div>
+
+    
+
+    
+
+    <!-- Projects Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="task-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5><i class="fas fa-project-diagram me-2"></i> Lista Task Completa</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Titolo</th>
+                                <th>Descrizione</th>
+                                <th>Stato</th>
+                                <th>Completato</th>
+                                <th>Scadenza</th>
+                                <th>Categoria</th>
+                                <th>Assegnato a</th>
+                                <th>Creato il</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="task : ${tasks}">
+                                <td th:text="${task.id}">ID</td>
+                                <td th:text="${task.titolo}">Titolo</td>
+                                <td th:text="${task.descrizione}">Descrizione</td>
+                                <td th:text="${task.status}">Stato</td>
+                                <td th:text="${task.completed}">Completato</td>
+                                <td th:text="${task.dataDeadline}">Scadenza</td>
+                                <td th:text="${task.categoria}">Categoria</td>
+                                <td th:text="${task.user != null ? task.user.username : 'N/A'}">Assegnato a</td>
+                                <td th:text="${task.dataCreatedTask}">Creato il</td>
+                            </tr>
+                            <tr th:if="${tasks == null or #lists.isEmpty(tasks)}">
+                                <td colspan="9" class="text-center">Nessuna task disponibile</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Add this right before the closing </body> tag -->
+<script>
+    // Ensure all navigation links work correctly
+    document.addEventListener('DOMContentLoaded', function () {
+        const projectsLink = document.querySelector('a[href="/projects"]');
+        if (projectsLink) {
+            projectsLink.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.location.href = '/projects';
+            });
+        }
+    });
+</script>
+
 </body>
+
 </html>

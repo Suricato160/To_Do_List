@@ -1,0 +1,338 @@
+/* styles.css */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #2b2d42; /* Grigio-blu scuro */
+    margin: 0;
+    padding: 0;
+    color: #edf2f4; /* Testo chiaro pastello */
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    background-color: #3d405b; /* Blu scuro pastello */
+    color: #edf2f4;
+    padding: 20px;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.sidebar .profile {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.sidebar .profile img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    border: 2px solid #81a4cd; /* Blu pastello chiaro */
+}
+
+.sidebar .profile h5 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.sidebar .profile p {
+    margin: 0;
+    font-size: 14px;
+    color: #d9e2ec; /* Grigio chiaro pastello */
+}
+
+.sidebar .nav-link {
+    color: #edf2f4;
+    padding: 10px 0;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+}
+
+.sidebar .nav-link i {
+    margin-right: 10px;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #5c637a; /* Grigio-blu medio */
+    border-radius: 5px;
+}
+
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.header .search-bar {
+    width: 300px;
+    padding: 8px;
+    border: 1px solid #5c637a;
+    border-radius: 20px;
+    font-size: 14px;
+    background-color: #353852; /* Blu scuro profondo */
+    color: #edf2f4;
+}
+
+.header .search-bar::placeholder {
+    color: #81a4cd;
+}
+
+.header .icons i {
+    margin-left: 15px;
+    font-size: 20px;
+    color: #81a4cd; /* Blu pastello */
+}
+
+.welcome-message {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #f4f1de; /* Beige pastello chiaro */
+}
+
+.welcome-message .emoji {
+    font-size: 28px;
+}
+
+.task-card {
+    background-color: #353852; /* Blu scuro profondo */
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    margin-bottom: 20px;
+}
+
+.progress-circles {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.progress-circle {
+    text-align: center;
+}
+
+.progress-circle .circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #edf2f4;
+}
+
+.completed-circle {
+    background: conic-gradient(#95b8d1 0% 84%, #5c637a 84% 100%); /* Azzurro pastello */
+}
+
+.in-progress-circle {
+    background: conic-gradient(#b8bedd 0% 46%, #5c637a 46% 100%); /* Lavanda pastello */
+}
+
+.not-started-circle {
+    background: conic-gradient(#e07a5f 0% 13%, #5c637a 13% 100%); /* Corallo pastello */
+}
+
+.completed-task {
+    background-color: #353852;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.completed-task .task-info h6 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: #f4f1de;
+}
+
+.completed-task .task-info p {
+    margin: 0;
+    font-size: 14px;
+    color: #d9e2ec;
+}
+
+.completed-task .task-info .status {
+    font-size: 12px;
+    color: #95b8d1; /* Azzurro pastello */
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 15px;
+    }
+    
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .header .search-bar {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+    
+    .welcome-message {
+        font-size: 20px;
+    }
+    
+    .progress-circles {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .progress-circle {
+        margin-bottom: 20px;
+    }
+}
+
+/* Login and Register Forms */
+.container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #353852;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.container h1, .container h2 {
+    text-align: center;
+    color: #f4f1de;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #d9e2ec;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #5c637a;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #2b2d42;
+    color: #edf2f4;
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #81a4cd; /* Blu pastello */
+    color: #2b2d42;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover {
+    background-color: #95b8d1;
+}
+
+.form-footer {
+    text-align: center;
+    margin-top: 20px;
+    color: #d9e2ec;
+}
+
+.form-footer a {
+    color: #e07a5f; /* Corallo pastello */
+    text-decoration: none;
+}
+
+/* Navbar toggle for mobile */
+.menu-toggle {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1001;
+    background-color: #3d405b;
+    color: #edf2f4;
+    border: none;
+    border-radius: 5px;
+    padding: 8px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+    }
+    
+    .container {
+        padding: 20px;
+        margin: 30px 15px;
+    }
+}
+
+/* styles.css - Aggiungi queste regole in fondo al file */
+
+/* Stile per la tabella */
+.table {
+    color: #edf2f4; /* Testo chiaro pastello */
+    background-color: #353852; /* Fondo scuro */
+    border-color: #5c637a; /* Bordi grigio-blu medio */
+}
+
+/* Intestazione della tabella */
+.table thead th {
+    background-color: #3d405b; /* Blu scuro pastello */
+    color: #f4f1de; /* Beige pastello chiaro */
+    border-bottom: 2px solid #5c637a;
+}
+
+/* Righe alternate per table-striped */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #2b2d42; /* Grigio-blu scuro leggermente diverso */
+}
+
+/* Hover sulle righe */
+.table tbody tr:hover {
+    background-color: #5c637a; /* Grigio-blu medio */
+    color: #fff;
+}
+
+/* Bordi celle */
+.table th, .table td {
+    border-color: #5c637a;
+}
