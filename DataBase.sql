@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS `ToDoList`.`user` (
   `role` ENUM('USER', 'ADMIN') NOT NULL,
   `nome` VARCHAR(45) NULL,
   `cognome` VARCHAR(45) NULL,
+  `mansione` VARCHAR(45) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -177,42 +178,8 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 
 
+
 -- INSERIMENTO DATI --
 
 USE `ToDoList`;
 
--- Inserimento dati nella tabella `user`
-INSERT INTO `user` (`id`, `username`, `password`, `email`, `role`, `nome`, `cognome`) VALUES
-(1, 'mario.rossi', 'password123', 'mario.rossi@email.com', 'USER', 'Mario', 'Rossi'),
-(2, 'admin', 'adminpass', 'admin@email.com', 'ADMIN', 'Admin', 'Admin'),
-(3, 'luca.bianchi', 'pass456', 'luca.bianchi@email.com', 'USER', 'Luca', 'Bianchi');
-
--- Inserimento dati nella tabella `projects`
-INSERT INTO `projects` (`id`, `Title`, `description`, `data_creation_project`, `data_update_project`, `data_deadline`, `data_closed_project`, `User_id`) VALUES
-(1, 'Sito Web Azienda', 'Sviluppo sito aziendale', '2025-03-01 10:00:00', '2025-03-15 14:30:00', '2025-04-30 23:59:59', NULL, 1),
-(2, 'App Mobile', 'App per gestione task', '2025-03-10 09:00:00', '2025-03-20 16:00:00', '2025-05-15 23:59:59', NULL, 2),
-(3, 'Report Mensile', 'Report per il team', '2025-03-15 12:00:00', NULL, '2025-03-31 18:00:00', '2025-03-30 10:00:00', 3);
-
--- Inserimento dati nella tabella `Task_assignements`
-INSERT INTO `Task_assignements` (`id`, `projects_id`) VALUES
-(1, 1),
-(2, 2),
-(3, 3);
-
--- Inserimento dati nella tabella `task`
-INSERT INTO `task` (`id`, `titolo`, `descrizione`, `status`, `data_pending`, `data_started`, `data_progress`, `data_completed`, `data_deadline`, `categoria`, `reminder`, `notes`, `repeat_task`, `attachment`, `data_created_task`, `data_updated_task`, `projects_id`, `user_id`, `assigner_id`) VALUES
-(1, 'Progettazione UI', 'Creare mockup interfaccia', 'WORK IN PROGRESS', '2025-03-01 10:00:00', '2025-03-05 09:00:00', '2025-03-10 14:00:00', NULL, '2025-03-20 17:00:00', 'Design', '3 giorni prima', 'Usare colori aziendali', 'NONE', 'mockup.pdf', '2025-03-01 10:00:00', '2025-03-10 14:00:00', 1, 1, 2),
-(2, 'Sviluppo Backend', 'API per autenticazione', 'STARTED', '2025-03-10 09:00:00', '2025-03-15 10:00:00', NULL, NULL, '2025-04-01 23:59:59', 'Backend', '1 giorno prima', 'Implementare JWT', 'NONE', NULL, '2025-03-10 09:00:00', '2025-03-15 10:00:00', 2, 2, 2),
-(3, 'Scrittura Report', 'Report vendite marzo', 'COMPLETED', '2025-03-15 12:00:00', '2025-03-16 09:00:00', '2025-03-17 14:00:00', '2025-03-18 16:00:00', '2025-03-20 18:00:00', 'Documentazione', '2 giorni prima', 'Includere grafici', 'MONTHLY', 'report.pdf', '2025-03-15 12:00:00', '2025-03-18 16:00:00', 3, 3, 2);
-
--- Inserimento dati nella tabella `Task_assignements_has_Task`
-INSERT INTO `Task_assignements_has_Task` (`Task_assignements_id`, `Task_id`) VALUES
-(1, 1),
-(2, 2),
-(3, 3);
-
--- Inserimento dati nella tabella `comments`
-INSERT INTO `comments` (`id`, `data_comment`, `text`, `Task_id`, `user_id`) VALUES
-(1, '2025-03-05 15:00:00', 'Ottimo lavoro sul mockup, aggiungere pulsante login', 1, 2),
-(2, '2025-03-16 11:00:00', 'API funzionante, testare con frontend', 2, 2),
-(3, '2025-03-17 15:00:00', 'Aggiungere più dettagli sulle vendite', 3, 1);
