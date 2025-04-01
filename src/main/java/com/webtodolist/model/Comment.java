@@ -1,4 +1,4 @@
-package com.webtodolist.entity;
+package com.webtodolist.model;
 
 import java.time.LocalDateTime;
 

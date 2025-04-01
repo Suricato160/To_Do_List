@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.webtodolist.entity.Project;
-import com.webtodolist.entity.User;
+import com.webtodolist.model.Project;
+import com.webtodolist.model.User;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> findByUser(User user);
