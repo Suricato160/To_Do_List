@@ -28,7 +28,7 @@ USE `ToDoList` ;
 -- -----------------------------------------------------
 -- Table `ToDoList`.`user`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `ToDoList`.`user` (
+CREATE TABLE IF NOT EXISTS `ToDoList`.`users` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(45) NOT NULL,
   `password` VARCHAR(45) NOT NULL,
@@ -68,7 +68,7 @@ DEFAULT CHARACTER SET = utf8mb3;
 -- -----------------------------------------------------
 -- Table `ToDoList`.`task`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `ToDoList`.`task` (
+CREATE TABLE IF NOT EXISTS `ToDoList`.`tasks` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `titolo` VARCHAR(45) NULL DEFAULT NULL,
   `descrizione` VARCHAR(45) NULL DEFAULT NULL,
@@ -141,7 +141,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 USE `ToDoList`;
 
-INSERT INTO `ToDoList`.`user` (username, password, email, role, nome, cognome, mansione) VALUES
+INSERT INTO `ToDoList`.`users` (username, password, email, role, nome, cognome, mansione) VALUES
 ('anna_pm1', 'pass123', 'anna1@greenwave.com', 'ADMIN', 'Anna', 'Rossi', 'Project Manager'),
 ('mario_pm2', 'pass123', 'mario@greenwave.com', 'ADMIN', 'Mario', 'Bianchi', 'Project Manager'),
 ('clara_pm3', 'pass123', 'clara@greenwave.com', 'USER', 'Clara', 'Verdi', 'Project Manager'),
@@ -201,7 +201,7 @@ INSERT INTO `ToDoList`.`projects` (Title, description, data_creation_project, da
 ('Sustainability App', 'App per sostenibilità', '2025-04-04 09:00:00', '2025-04-04 09:00:00', '2025-06-15 17:00:00', NULL, 4),
 ('Green Video Campaign', 'Video promozionale green', '2025-04-05 09:00:00', '2025-04-05 09:00:00', '2025-06-30 17:00:00', NULL, 5);
 
-INSERT INTO `ToDoList`.`task` (titolo, descrizione, status, data_pending, data_deadline, data_completed, categoria, projects_id, user_id, assigner_id, completed) VALUES
+INSERT INTO `ToDoList`.`tasks` (titolo, descrizione, status, data_pending, data_deadline, data_completed, categoria, projects_id, user_id, assigner_id, completed) VALUES
 ('Timeline P1', 'Definire scadenze', 'COMPLETED', '2025-04-01 09:00:00', '2025-04-05 17:00:00', '2025-04-05 17:00:00', 'Gestione', 1, 1, 1, 1),
 ('Logo P1', 'Creare logo', 'COMPLETED', '2025-04-02 09:00:00', '2025-04-10 17:00:00', '2025-05-02 17:00:00', 'Design', 1, 7, 1, 1),
 ('Slogan P1', 'Testo slogan', 'COMPLETED', '2025-04-02 09:00:00', '2025-04-08 17:00:00', '2025-05-01 17:00:00', 'Copywriting', 1, 14, 1, 1),
