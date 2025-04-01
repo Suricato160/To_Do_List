@@ -29,11 +29,11 @@ USE `ToDoList` ;
 -- Table `ToDoList`.`user`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `ToDoList`.`user` (
-  `id` INT NOT NULL,
-  `username` VARCHAR(45) NULL,
-  `password` VARCHAR(45) NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(45) NOT NULL,
   `email` VARCHAR(45) NULL,
-  `role` ENUM('USER', 'ADMIN') NULL,
+  `role` ENUM('USER', 'ADMIN') NOT NULL,
   `nome` VARCHAR(45) NULL,
   `cognome` VARCHAR(45) NULL,
   PRIMARY KEY (`id`))
@@ -44,8 +44,8 @@ ENGINE = InnoDB;
 -- Table `ToDoList`.`projects`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `ToDoList`.`projects` (
-  `id` INT NOT NULL,
-  `Title` VARCHAR(45) NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `Title` VARCHAR(45) NOT NULL,
   `description` VARCHAR(45) NULL,
   `data_creation_project` DATETIME NULL,
   `data_update_project` DATETIME NULL,
@@ -82,10 +82,10 @@ ENGINE = InnoDB;
 -- Table `ToDoList`.`task`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `ToDoList`.`task` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `titolo` VARCHAR(45) NULL,
   `descrizione` VARCHAR(45) NULL,
-  `status` ENUM('PENDING', 'STARTED', 'WORK_IN_PROGRESS', 'COMPLETED') NULL DEFAULT 'PENDING',
+  `status` ENUM('PENDING', 'STARTED', 'WORK_IN_PROGRESS', 'COMPLETED') NOT NULL DEFAULT 'PENDING',
   `data_pending` DATETIME NULL,
   `data_started` DATETIME NULL,
   `data_progress` DATETIME NULL,
@@ -150,7 +150,7 @@ ENGINE = InnoDB;
 -- Table `ToDoList`.`comments`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `ToDoList`.`comments` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `data_comment` DATETIME NULL,
   `text` VARCHAR(300) NULL,
   `Task_id` INT NOT NULL,
@@ -174,8 +174,6 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
-
-
 
 
 
