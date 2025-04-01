@@ -12,7 +12,7 @@ body {
     left: 0;
     height: 100%;
     width: 250px;
-    background-color: #ff6f61;
+    background-color: #618eff;
     color: white;
     padding: 20px;
     transition: transform 0.3s ease;
@@ -55,7 +55,7 @@ body {
 }
 
 .sidebar .nav-link:hover {
-    background-color: #ff8a80;
+    background-color: #618eff;
     border-radius: 5px;
 }
 
@@ -84,7 +84,7 @@ body {
 .header .icons i {
     margin-left: 15px;
     font-size: 20px;
-    color: #ff6f61;
+    color: #618eff;
 }
 
 .welcome-message {
@@ -295,7 +295,7 @@ body {
 button[type="submit"] {
     width: 100%;
     padding: 10px;
-    background-color: #ff6f61;
+    background-color: #618eff;
     color: white;
     border: none;
     border-radius: 5px;
@@ -305,7 +305,7 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-    background-color: #ff8a80;
+    background-color: #618eff;
 }
 
 .form-footer {
@@ -315,7 +315,7 @@ button[type="submit"]:hover {
 }
 
 .form-footer a {
-    color: #ff6f61;
+    color: #618eff;
     text-decoration: none;
 }
 
@@ -326,7 +326,7 @@ button[type="submit"]:hover {
     top: 15px;
     left: 15px;
     z-index: 1001;
-    background-color: #ff6f61;
+    background-color: #618eff;
     color: white;
     border: none;
     border-radius: 5px;
