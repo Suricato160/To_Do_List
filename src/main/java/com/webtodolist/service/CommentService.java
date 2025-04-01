@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CommentService {
+<<<<<<< Updated upstream
 
     Optional<Comment> findById(int id);
     
@@ -21,3 +22,20 @@ public interface CommentService {
     
     List<Comment> findAllComments();
 }
+=======
+    
+    List<Comment> findByIdTask(int taskId);
+    
+    List<Comment> findByIdUser(int userId);
+    
+    Comment saveComment(Comment comment);
+    
+    void deleteComment(int id);
+    
+    void deleteByIdTask(int taskId);
+    
+    List<Comment> findAllComments();
+    
+    Optional<Comment> findById(int id);
+}
+>>>>>>> Stashed changes

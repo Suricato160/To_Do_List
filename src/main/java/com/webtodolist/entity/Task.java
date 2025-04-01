@@ -15,6 +15,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -73,13 +75,12 @@ public class Task {
     private LocalDateTime dataCreatedTask;
 
     @Column(name = "data_updated_task")
-    private LocalDateTime dataUpdatedTask;
+    private Data dataUpdatedTask;
 
 
 
 
     // ================== Relazioni ===================
-
 
     @ManyToOne
     @JoinColumn(name = "project_id")
@@ -93,8 +94,6 @@ public class Task {
     @JoinColumn(name = "assigner_id")
     private User assigner;
 
-
-
     // =========== ENUM ============
 
     public enum TaskStatus {
@@ -103,6 +102,4 @@ public class Task {
         WORK_IN_PROGRESS,
         COMPLETED
     }
-
-
 }
