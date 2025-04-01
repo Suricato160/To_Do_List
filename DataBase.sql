@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `ToDoList`.`projects` (
   INDEX `fk_projects_User_idx` (`User_id` ASC) VISIBLE,
   CONSTRAINT `fk_projects_User`
     FOREIGN KEY (`User_id`)
-    REFERENCES `ToDoList`.`user` (`id`))
+    REFERENCES `ToDoList`.`users` (`id`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8mb3;
@@ -98,10 +98,10 @@ CREATE TABLE IF NOT EXISTS `ToDoList`.`tasks` (
     REFERENCES `ToDoList`.`projects` (`id`),
   CONSTRAINT `fk_Task_User1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `ToDoList`.`user` (`id`),
+    REFERENCES `ToDoList`.`users` (`id`),
   CONSTRAINT `fk_Task_User2`
     FOREIGN KEY (`assigner_id`)
-    REFERENCES `ToDoList`.`user` (`id`))
+    REFERENCES `ToDoList`.`users` (`id`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8mb3;
@@ -121,10 +121,10 @@ CREATE TABLE IF NOT EXISTS `ToDoList`.`comments` (
   INDEX `fk_comments_user1_idx` (`user_id` ASC) VISIBLE,
   CONSTRAINT `fk_comments_Task1`
     FOREIGN KEY (`Task_id`)
-    REFERENCES `ToDoList`.`task` (`id`),
+    REFERENCES `ToDoList`.`tasks` (`id`),
   CONSTRAINT `fk_comments_user1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `ToDoList`.`user` (`id`))
+    REFERENCES `ToDoList`.`users` (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
 
