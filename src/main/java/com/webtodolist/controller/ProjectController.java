@@ -56,7 +56,7 @@ public class ProjectController {
         if (project.isPresent()) {
             model.addAttribute("project", project.get());
             model.addAttribute("user", project.get().getUser());
-            return "project-detail";  // This would be a new template to create
+            return "projectDetail";  // This would be a new template to create
         } else {
             return "redirect:/projects";
         }

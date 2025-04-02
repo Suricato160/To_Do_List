@@ -9,7 +9,7 @@ LISTA DI COSE DA FARE
 
 
 ================ ADRIANO ==============
-security conf
+assegnazione task
 
 ================ OSAMA ==============
 - Sistemato problema "Exception evaluating SpringEL expression: 'user.nome'" ✓

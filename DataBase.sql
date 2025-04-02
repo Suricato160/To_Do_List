@@ -343,4 +343,10 @@ INSERT INTO `ToDoList`.`comments` (data_comment, text, Task_id, user_id) VALUES
 
 
 
-Error Code: 1452. Cannot add or update a child row: a foreign key constraint fails (`todolist`.`projects`, CONSTRAINT `fk_projects_User` FOREIGN KEY (`User_id`) REFERENCES `user` (`id`))
+-- 1. Rimuovi la colonna esistente
+ALTER TABLE `tasks`
+DROP COLUMN `completed`;
+
+-- 2. Aggiungi la nuova colonna priority con tipo ENUM e default 'LOW'
+ALTER TABLE `tasks`
+ADD COLUMN `priority` ENUM('LOW', 'MEDIUM', 'HIGH') NOT NULL DEFAULT 'LOW';

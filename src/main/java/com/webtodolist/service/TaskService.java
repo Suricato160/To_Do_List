@@ -16,4 +16,29 @@ public class TaskService {
     public List<Task> getAllTasks() {
         return taskRepository.findAll();
     }
+
+    public void saveTask(Task task) {
+        // Verifica che i campi obbligatori siano valorizzati
+        if (task.getTitolo() == null || task.getTitolo().isEmpty()) {
+            throw new IllegalArgumentException("Il titolo della task è obbligatorio");
+        }
+        if (task.getStatus() == null) {
+            task.setStatus(Task.TaskStatus.PENDING); // Valore di default
+        }
+        if (task.getPriority() == null) {
+            task.setPriority(Task.TaskPriority.LOW); // Valore di default
+        }
+        if (task.getProject() == null) {
+            throw new IllegalArgumentException("Il progetto è obbligatorio");
+        }
+        if (task.getUser() == null) {
+            throw new IllegalArgumentException("L'utente assegnato è obbligatorio");
+        }
+        if (task.getAssigner() == null) {
+            throw new IllegalArgumentException("L'assigner è obbligatorio");
+        }
+
+        // Salva la task nel database
+        taskRepository.save(task);
+    }
 }
