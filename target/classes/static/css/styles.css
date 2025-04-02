@@ -345,3 +345,171 @@ button[type="submit"]:hover {
         margin: 30px 15px;
     }
 }
+
+/* Text color classes for theme switching */
+.light-mode-text {
+    color: #333;
+}
+
+.light-mode-text .text-muted {
+    color: #666 !important;
+}
+
+.light-mode-text a {
+    color: #95b8d1;
+}
+
+.light-mode-text a:hover {
+    color: #6a8da9;
+}
+
+.light-mode-text .nav-link {
+    color: white; /* Per i links nella sidebar */
+}
+
+.light-mode-text input, 
+.light-mode-text textarea, 
+.light-mode-text select {
+    color: #333;
+    background-color: #fff;
+}
+
+.light-mode-text .card,
+.light-mode-text .task-card {
+    color: #333;
+}
+
+.light-mode-text .form-control::placeholder {
+    color: #aaa;
+}
+
+/* Override per i colori dei badge in light mode */
+.light-mode-text .badge {
+    color: #fff !important;
+}
+
+/* Migliorie per light mode */
+html.light-mode-text {
+    background-color: #f8f9fa;
+}
+
+.light-mode-text .login-card {
+    background-color: #fff;
+    color: #333;
+}
+
+.light-mode-text .login-card h3 {
+    color: #333;
+}
+
+.light-mode-text .login-card .fas {
+    color: #2196f3;
+}
+
+.light-mode-text input, 
+.light-mode-text textarea, 
+.light-mode-text select,
+.light-mode-text .form-control {
+    color: #333;
+    background-color: #fff;
+    border-color: #ddd;
+}
+
+.light-mode-text .form-control::placeholder {
+    color: #aaa;
+}
+
+/* Fix per tutti i contenitori in light mode */
+.light-mode-text,
+.light-mode-text body,
+.light-mode-text .main-content {
+    background-color: #f8f9fa;
+}
+
+/* Aggiunte per migliorare l'uniformità dei colori */
+a {
+    color: #95b8d1;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: #6a8da9;
+}
+
+/* Contrasto ottimizzato per il tema chiaro */
+.table a {
+    color: #95b8d1;
+    text-decoration: none;
+}
+
+.table a:hover {
+    color: #6a8da9;
+    text-decoration: underline;
+}
+
+/* Button styling coerente */
+.btn-outline-primary {
+    color: #95b8d1;
+    border-color: #95b8d1;
+}
+
+.btn-outline-primary:hover {
+    background-color: #95b8d1;
+    color: #fff;
+}
+
+/* Projects table styling */
+.description-cell {
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Table header with icons */
+.table thead th i {
+    opacity: 0.7;
+}
+
+/* Styling for task count badges */
+.table td .badge {
+    font-size: 0.85rem;
+    padding: 0.35em 0.65em;
+}
+
+/* Improve status badges */
+.badge.bg-success, .badge.bg-primary {
+    font-weight: normal;
+}
+
+/* Better spacing in table cells */
+.table td, .table th {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+}
+
+/* Add hover tooltip for truncated text */
+[title]:hover {
+    cursor: pointer;
+}
+
+/* Ensure table header is distinct in light mode */
+.light-mode-text .table thead th {
+    border-bottom-color: #ddd;
+    color: #555;
+}
+
+/* Better title links */
+.table td a.fw-bold {
+    text-decoration: none;
+    color: #618eff;
+}
+
+.table td a.fw-bold:hover {
+    text-decoration: underline;
+}
+
+/* Fix for dark mode */
+.dark-mode-text .table td a.fw-bold {
+    color: #95b8d1;
+}

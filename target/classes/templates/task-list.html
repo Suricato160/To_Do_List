@@ -10,6 +10,7 @@
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/styles2.css" id="theme-stylesheet" disabled>
 </head>
 
 <body>
@@ -43,6 +44,11 @@
             <i class="fas fa-calendar-alt"></i>
             <span th:text="${#temporals.format(#temporals.createNow(), 'EEEE dd/MM/yyyy')}">Martedì
                 20/06/2023</span>
+            <!-- Theme toggle button -->
+            <div class="form-check form-switch d-inline-block ms-3">
+                <input class="form-check-input" type="checkbox" id="darkModeSwitch">
+                <label class="form-check-label" for="darkModeSwitch"><i id="themeIcon" class="fas fa-moon"></i></label>
+            </div>
         </div>
     </div>
 
@@ -109,6 +115,30 @@
                 window.location.href = '/projects';
             });
         }
+    });
+</script>
+<script src="/js/theme.js"></script>
+<script>
+    // Aggiunge funzionalità per cambiare l'icona in base al tema
+    document.addEventListener('DOMContentLoaded', function() {
+        const darkModeSwitch = document.getElementById('darkModeSwitch');
+        const themeIcon = document.getElementById('themeIcon');
+        
+        // Imposta l'icona corretta all'avvio
+        if (localStorage.getItem('darkMode') === 'true') {
+            themeIcon.className = 'fas fa-moon';
+        } else {
+            themeIcon.className = 'fas fa-sun';
+        }
+        
+        // Cambia l'icona quando si cambia il tema
+        darkModeSwitch.addEventListener('change', function() {
+            if (this.checked) {
+                themeIcon.className = 'fas fa-moon';
+            } else {
+                themeIcon.className = 'fas fa-sun';
+            }
+        });
     });
 </script>
 

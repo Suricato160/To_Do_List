@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List - Impostazioni</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/styles2.css" id="theme-stylesheet" disabled>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="profile">
+            <img src="https://via.placeholder.com/80" alt="Profile Picture">
+            <h5 th:text="${user != null ? user.username : 'Utente'}">Utente</h5>
+            <p th:text="${user != null ? user.email : 'email@example.com'}">email@example.com</p>
+        </div>
+        <nav>
+            <a href="/index" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="/task-list" class="nav-link"><i class="fas fa-tasks"></i> Tutte le Task</a>
+            <a href="/projects" class="nav-link"><i class="fas fa-project-diagram"></i> Progetti</a>
+            <a href="/categories" class="nav-link"><i class="fas fa-tag"></i> Categorie</a>
+            <a href="/settings" class="nav-link active"><i class="fas fa-cog"></i> Impostazioni</a>
+            <a href="/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div class="d-flex align-items-center">
+                <h2><i class="fas fa-cog"></i> Impostazioni</h2>
+            </div>
+        </div>
+
+        <!-- Settings Cards -->
+        <div class="row">
+            <!-- Theme Settings -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-paint-brush me-2"></i>Tema Applicazione</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Modalità scura</span>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="darkModeSwitch">
+                                <label class="form-check-label" for="darkModeSwitch" id="darkModeLabel">Disattivata</label>
+                            </div>
+                        </div>
+                        <p class="text-muted mt-3">
+                            La modalità scura è più rilassante per gli occhi in ambienti poco illuminati.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Settings -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-user-cog me-2"></i>Impostazioni Profilo</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="profileImage" class="form-label">Immagine Profilo</label>
+                            <input class="form-control" type="file" id="profileImage">
+                        </div>
+                        <button class="btn btn-primary" disabled>Aggiorna Profilo</button>
+                        <p class="text-muted mt-3">
+                            Questa funzionalità sarà disponibile presto.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Settings -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-bell me-2"></i>Notifiche</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span>Notifiche email</span>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="emailNotifications" checked disabled>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Notifiche browser</span>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="browserNotifications" disabled>
+                            </div>
+                        </div>
+                        <p class="text-muted mt-3">
+                            Questa funzionalità sarà disponibile presto.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-info-circle me-2"></i>Informazioni</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>ToDoList App</h6>
+                        <p>Versione: 1.0.0</p>
+                        <p>Un'applicazione per la gestione delle attività personali e dei progetti.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Theme Switcher Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkModeSwitch = document.getElementById('darkModeSwitch');
+            const darkModeLabel = document.getElementById('darkModeLabel');
+            const themeStylesheet = document.getElementById('theme-stylesheet');
+            
+            // Check if user has previously chosen a theme
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            
+            // Set initial state
+            darkModeSwitch.checked = isDarkMode;
+            darkModeLabel.textContent = isDarkMode ? 'Attivata' : 'Disattivata';
+            themeStylesheet.disabled = !isDarkMode;
+            
+            // Apply appropriate text color class
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode-text');
+                document.body.classList.remove('light-mode-text');
+            } else {
+                document.body.classList.add('light-mode-text');
+                document.body.classList.remove('dark-mode-text');
+            }
+            
+            // Toggle theme when switch is clicked
+            darkModeSwitch.addEventListener('change', function() {
+                if (this.checked) {
+                    themeStylesheet.disabled = false;
+                    darkModeLabel.textContent = 'Attivata';
+                    localStorage.setItem('darkMode', 'true');
+                    document.body.classList.add('dark-mode-text');
+                    document.body.classList.remove('light-mode-text');
+                } else {
+                    themeStylesheet.disabled = true;
+                    darkModeLabel.textContent = 'Disattivata';
+                    localStorage.setItem('darkMode', 'false');
+                    document.body.classList.add('light-mode-text');
+                    document.body.classList.remove('dark-mode-text');
+                }
+            });
+        });
+    </script>
+    <script src="/js/theme.js"></script>
+</body>
+</html>

@@ -10,6 +10,7 @@
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/styles2.css" id="theme-stylesheet" disabled>
 </head>
 
 <body>
@@ -26,7 +27,7 @@
             <a href="/projects" class="nav-link"><i class="fas fa-project-diagram"></i> Progetti</a>
             <a href="/categories" class="nav-link"><i class="fas fa-tag"></i> Categorie</a>
             <a href="/settings" class="nav-link"><i class="fas fa-cog"></i> Impostazioni</a>
-            <a href="/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a href="/login" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </nav>
     </div>
 
@@ -94,25 +95,41 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Titolo</th>
-                                    <th>Descrizione</th>
-                                    <th>Deadline</th>
-                                    <th>Attività</th>
-                                    <th>Stato</th>
+                                    <th><i class="fas fa-bookmark me-1"></i> Titolo</th>
+                                    <th><i class="fas fa-align-left me-1"></i> Descrizione</th>
+                                    <th><i class="fas fa-calendar-alt me-1"></i> Deadline</th>
+                                    <th><i class="fas fa-tasks me-1"></i> Attività</th>
+                                    <th><i class="fas fa-info-circle me-1"></i> Stato</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr th:each="project : ${projects}" th:if="${projectStat.index < 5}">
-                                    <td><a th:href="@{/projects/{id}(id=${project.id})}"
-                                            th:text="${project.title}">Progetto</a></td>
-                                    <td th:text="${project.description}">Descrizione</td>
-                                    <td th:text="${#temporals.format(project.dataDeadline, 'dd/MM/yyyy')}">Deadline</td>
-                                    <td th:text="${#lists.size(project.tasks)}">0</td>
+                                    <td>
+                                        <a th:href="@{/projects/{id}(id=${project.id})}"
+                                            th:text="${project.title}" class="fw-bold">Progetto</a>
+                                    </td>
+                                    <td>
+                                        <div class="description-cell" th:title="${project.description}">
+                                            <span th:text="${#strings.abbreviate(project.description, 40)}">Descrizione</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span th:with="daysLeft=${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), project.dataDeadline)}"
+                                              th:class="${daysLeft <= 3 ? 'text-danger fw-bold' : (daysLeft <= 7 ? 'text-warning' : '')}">
+                                            <i th:class="${daysLeft <= 3 ? 'fas fa-exclamation-circle me-1' : (daysLeft <= 7 ? 'fas fa-exclamation me-1' : 'far fa-calendar me-1')}"></i>
+                                            <span th:text="${#temporals.format(project.dataDeadline, 'dd/MM/yyyy')}">Deadline</span>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span th:with="taskCount=${#lists.size(project.tasks)}"
+                                              th:class="${taskCount > 5 ? 'badge bg-info' : (taskCount > 0 ? 'badge bg-secondary' : '')}"
+                                              th:text="${taskCount}">0</span>
+                                    </td>
                                     <td>
                                         <span th:if="${project.dataClosedProject != null}"
-                                            class="badge bg-success">Completato</span>
+                                            class="badge bg-success"><i class="fas fa-check-circle me-1"></i> Completato</span>
                                         <span th:unless="${project.dataClosedProject != null}"
-                                            class="badge bg-primary">In corso</span>
+                                            class="badge bg-primary"><i class="fas fa-spinner me-1"></i> In corso</span>
                                     </td>
                                 </tr>
                                 <tr th:if="${projects == null or #lists.isEmpty(projects)}">
@@ -227,6 +244,7 @@
             }
         });
     </script>
+    <script src="/js/theme.js"></script>
 
 </body>
 

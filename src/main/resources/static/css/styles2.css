@@ -112,6 +112,8 @@ body {
     padding: 15px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     margin-bottom: 20px;
+    border-color: #5c637a;
+    color: #edf2f4;
 }
 
 .progress-circles {
@@ -335,4 +337,348 @@ button[type="submit"]:hover {
 /* Bordi celle */
 .table th, .table td {
     border-color: #5c637a;
+}
+
+/* Enhanced Table Styling for Dark Mode */
+.table {
+    color: #edf2f4; /* Testo chiaro pastello */
+    background-color: #353852; /* Fondo scuro */
+    border-color: #5c637a; /* Bordi grigio-blu medio */
+}
+
+.table thead th {
+    background-color: #3d405b; /* Blu scuro pastello */
+    color: #f4f1de; /* Beige pastello chiaro */
+    border-bottom: 2px solid #5c637a;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #2b2d42; /* Grigio-blu scuro leggermente diverso */
+}
+
+.table-hover tbody tr:hover {
+    background-color: #5c637a; /* Grigio-blu medio */
+    color: #fff;
+}
+
+.table th, .table td {
+    border-color: #5c637a;
+}
+
+/* Fix table text and links in dark mode */
+.table a {
+    color: #95b8d1; /* Azzurro pastello per i link */
+    text-decoration: none;
+}
+
+.table a:hover {
+    color: #b8bedd; /* Lavanda pastello per hover dei link */
+    text-decoration: underline;
+}
+
+/* Button styling in dark mode */
+.btn-outline-primary {
+    color: #95b8d1;
+    border-color: #95b8d1;
+}
+
+.btn-outline-primary:hover {
+    background-color: #95b8d1;
+    color: #2b2d42;
+}
+
+.btn-primary {
+    background-color: #81a4cd;
+    border-color: #81a4cd;
+    color: #2b2d42;
+}
+
+.btn-primary:hover {
+    background-color: #95b8d1;
+    border-color: #95b8d1;
+}
+
+/* Card styling for all card-based layouts */
+.card {
+    background-color: #353852;
+    border-color: #5c637a;
+    color: #edf2f4;
+}
+
+.card-header {
+    background-color: #3d405b;
+    border-bottom-color: #5c637a;
+}
+
+.card-footer {
+    background-color: #353852;
+    border-top-color: #5c637a;
+}
+
+/* Text muted styling */
+.text-muted {
+    color: #d9e2ec !important;
+}
+
+/* Alert styling */
+.alert-info {
+    background-color: #3d405b;
+    border-color: #81a4cd;
+    color: #edf2f4;
+}
+
+.alert-success {
+    background-color: #3d4b42;
+    border-color: #95b8d1;
+    color: #edf2f4;
+}
+
+.alert-danger {
+    background-color: #4b3d3d;
+    border-color: #e07a5f;
+    color: #edf2f4;
+}
+
+/* Additional table fixes for dark mode */
+.table-responsive {
+    background-color: #353852;
+}
+
+.table tbody {
+    background-color: #353852;
+}
+
+.table td, .table th {
+    background-color: #353852;
+}
+
+.table-striped>tbody>tr:nth-of-type(odd)>* {
+    background-color: #2b2d42 !important;
+    --bs-table-accent-bg: none;
+}
+
+/* Override Bootstrap's default white backgrounds in tables and cards */
+.table-hover tbody tr:hover td {
+    background-color: #5c637a !important;
+    color: #edf2f4;
+}
+
+/* Fix background color for card-body in task cards */
+.task-card .card-body {
+    background-color: #353852;
+    color: #edf2f4;
+}
+
+/* Make sure all table containers have dark background */
+.task-card .table-responsive, 
+.task-card .table,
+.card .table-responsive,
+.card .table {
+    background-color: #353852;
+    border-color: #5c637a;
+}
+
+/* Fix card background in projects section */
+.card .card-body {
+    background-color: #353852;
+    color: #edf2f4;
+}
+
+/* Override any remaining white backgrounds */
+.bg-white, .bg-body {
+    background-color: #353852 !important;
+}
+
+/* Make sure badges stand out against dark backgrounds */
+.badge {
+    color: #2b2d42 !important;
+}
+
+/* Text color classes for theme switching */
+.dark-mode-text {
+    color: #edf2f4;
+}
+
+.dark-mode-text .text-muted {
+    color: #d9e2ec !important;
+}
+
+.dark-mode-text a:not(.btn):not(.nav-link) {
+    color: #95b8d1;
+}
+
+.dark-mode-text a:not(.btn):not(.nav-link):hover {
+    color: #b8bedd;
+}
+
+/* Assicura che il testo nei modali sia correttamente colorato */
+.dark-mode-text .modal-content {
+    background-color: #353852;
+    color: #edf2f4;
+}
+
+.dark-mode-text .modal-header,
+.dark-mode-text .modal-footer {
+    border-color: #5c637a;
+}
+
+.dark-mode-text .close {
+    color: #edf2f4;
+}
+
+/* Override per i colori dei badge in dark mode */
+.dark-mode-text .badge {
+    color: #2b2d42 !important;
+}
+
+/* Assicura che i link della tabella siano visibili in dark mode */
+.dark-mode-text .table a {
+    color: #95b8d1;
+}
+
+.dark-mode-text .table a:hover {
+    color: #b8bedd;
+}
+
+/* Migliorie per dark mode */
+html.dark-mode-text {
+    background-color: #2b2d42;
+}
+
+/* Override per elementi specifici in dark mode */
+.dark-mode-text .login-card {
+    background-color: #353852;
+    color: #edf2f4;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode-text .login-card h3 {
+    color: #edf2f4;
+}
+
+.dark-mode-text .login-card .fas {
+    color: #81a4cd;
+}
+
+.dark-mode-text .form-label {
+    color: #d9e2ec !important;
+}
+
+.dark-mode-text input, 
+.dark-mode-text textarea, 
+.dark-mode-text select,
+.dark-mode-text .form-control {
+    color: #edf2f4 !important;
+    background-color: #2b2d42 !important;
+    border-color: #5c637a !important;
+}
+
+.dark-mode-text .form-control::placeholder {
+    color: #81a4cd !important;
+}
+
+/* Assicura che tutti i contenitori abbiano il colore di sfondo scuro */
+.dark-mode-text .container,
+.dark-mode-text .container-fluid,
+.dark-mode-text .row > [class*="col"] {
+    background-color: transparent;
+}
+
+/* Fix per modal in dark mode */
+.dark-mode-text .modal-content {
+    background-color: #353852;
+    color: #edf2f4;
+}
+
+.dark-mode-text .modal-header,
+.dark-mode-text .modal-footer {
+    border-color: #5c637a;
+}
+
+.dark-mode-text .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Assicura che tutte le tabelle siano visibili in dark mode */
+.dark-mode-text .table {
+    color: #edf2f4;
+}
+
+.dark-mode-text .table-striped > tbody > tr:nth-of-type(even) > * {
+    background-color: #353852;
+    color: #edf2f4;
+}
+
+/* Migliore gestione dello sfondo scuro negli elementi nidificati */
+.dark-mode-text,
+.dark-mode-text body,
+.dark-mode-text .main-content {
+    background-color: #2b2d42;
+}
+
+/* Aggiunge uniformità ai colori dei link */
+a {
+    color: #95b8d1;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: #b8bedd;
+}
+
+/* Tutti i link nella sidebar mantengono il loro colore originale */
+.sidebar .nav-link {
+    color: #edf2f4;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #5c637a;
+}
+
+/* Mantiene consistenza per i link nelle card */
+.card a:not(.btn) {
+    color: #95b8d1;
+}
+
+.card a:not(.btn):hover {
+    color: #b8bedd;
+}
+
+/* Dark mode specific styling for project table */
+.dark-mode-text .description-cell {
+    color: #d9e2ec;
+}
+
+.dark-mode-text .table td a.fw-bold {
+    color: #95b8d1;
+    font-weight: bold !important;
+}
+
+.dark-mode-text .table td a.fw-bold:hover {
+    color: #b8bedd;
+}
+
+/* Better contrast for deadline text */
+.dark-mode-text .text-danger {
+    color: #ff8a80 !important; /* Lighter red for dark mode */
+}
+
+.dark-mode-text .text-warning {
+    color: #ffcc80 !important; /* Lighter orange for dark mode */
+}
+
+/* Header icons contrast fix */
+.dark-mode-text .table thead th i {
+    color: #81a4cd;
+}
+
+/* Fix badge contrast in dark mode */
+.dark-mode-text .badge.bg-info {
+    background-color: #64b5f6 !important;
+    color: #a7a7ce !important;
+}
+
+.dark-mode-text .badge.bg-secondary {
+    background-color: #90a4ae !important;
+    color: #a9a9d4 !important;
 }

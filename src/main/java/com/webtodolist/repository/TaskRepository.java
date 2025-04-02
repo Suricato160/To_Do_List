@@ -2,6 +2,7 @@ package com.webtodolist.repository;
 
 import com.webtodolist.model.Task;
 import com.webtodolist.model.Task.TaskStatus;
+import com.webtodolist.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,4 +16,6 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     List<Task> findByDataDeadlineBetween(LocalDateTime todayStart, LocalDateTime todayEnd);
 
     List<Task> findByStatus(TaskStatus completed);
+
+    List<Task> findByUser(User user);
 }
