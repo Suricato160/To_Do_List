@@ -40,8 +40,9 @@ public class Task {
     @Enumerated(EnumType.STRING) // Salva il valore dell'enum come stringa nel DB
     private TaskStatus status;
     
-    @Column(name = "completed")
-    private boolean completed;
+    @Column(name = "priority")
+    @Enumerated(EnumType.STRING)
+    private TaskPriority priority;
 
     @Column(name = "data_pending")
     private LocalDateTime dataPending;
@@ -103,5 +104,9 @@ public class Task {
         STARTED,
         WORK_IN_PROGRESS,
         COMPLETED
+    }
+
+    public enum TaskPriority { // Nuovo enum
+        LOW, MEDIUM, HIGH
     }
 }

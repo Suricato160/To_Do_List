@@ -24,9 +24,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorize -> authorize
-                // Risorse pubbliche
                 .requestMatchers("/login", "/register", "/css/**", "/js/**", "/images/**").permitAll()
-                // Tutte le altre richieste richiedono autenticazione
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -48,7 +46,6 @@ public class SecurityConfig {
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(false)
             )
-            // Configura il servizio di autenticazione
             .userDetailsService(userDetailsService);
 
         return http.build();
