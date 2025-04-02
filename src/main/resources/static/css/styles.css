@@ -4,6 +4,10 @@ body {
     background-color: #f8f9fa;
     margin: 0;
     padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .sidebar {
@@ -344,4 +348,47 @@ button[type="submit"]:hover {
         padding: 20px;
         margin: 30px 15px;
     }
+}
+
+/* Stile per la pagina di login */
+.login-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-card h3 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.login-card .form-control {
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+
+.login-card .btn-primary {
+    background-color: #2196f3;
+    border: none;
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1.1rem;
+    border-radius: 5px;
+}
+
+.login-card .btn-primary:hover {
+    background-color: #1e88e5;
+}
+
+.login-card .text-muted {
+    font-size: 0.9rem;
+}
+
+.login-card .fas {
+    color: #2196f3;
+    margin-right: 0.5rem;
 }
