@@ -77,6 +77,7 @@
                                 <th>Scadenza</th>
                                 <th>Categoria</th>
                                 <th>Assegnato a</th>
+                                <th>Creato da</th> <!-- Updated column header -->
                                 <th>Creato il</th>
                             </tr>
                         </thead>
@@ -90,10 +91,11 @@
                                 <td th:text="${task.dataDeadline}">Scadenza</td>
                                 <td th:text="${task.categoria}">Categoria</td>
                                 <td th:text="${task.user != null ? task.user.username : 'N/A'}">Assegnato a</td>
+                                <td th:text="${task.assigner != null && task.assigner.nome != null && task.assigner.cognome != null ? task.assigner.nome + ' ' + task.assigner.cognome : 'N/A'}">Creato da</td> <!-- Updated assigner display -->
                                 <td th:text="${task.dataCreatedTask}">Creato il</td>
                             </tr>
                             <tr th:if="${tasks == null or #lists.isEmpty(tasks)}">
-                                <td colspan="9" class="text-center">Nessuna task disponibile</td>
+                                <td colspan="10" class="text-center">Nessuna task disponibile</td>
                             </tr>
                         </tbody>
                     </table>

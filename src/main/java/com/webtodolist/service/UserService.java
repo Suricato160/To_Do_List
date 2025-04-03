@@ -18,9 +18,8 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User findById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
     }
 
     public Optional<User> findByUsername(String username) {

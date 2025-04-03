@@ -47,6 +47,7 @@ public class TaskController {
             // Retrieve all tasks for those projects
             tasks = projects.stream()
                             .flatMap(project -> project.getTasks().stream())
+                            .peek(task -> task.setAssigner(userService.findById(task.getAssigner().getId()).orElse(null))) // Populate assigner details
                             .toList();
         }
 
