@@ -3,7 +3,7 @@ package com.webtodolist.controller;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,52 +35,69 @@ public class DashboardController {
     private UserService userService;
 
     @GetMapping({"/", "/index"})
-    public String dashboard(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        // Ottieni tutte le task
-        List<Task> allTasks = taskService.getAllTasks();
-        model.addAttribute("tasks", allTasks);
+public String dashboard(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+    // Ottieni l'utente autenticato
+    Optional<User> currentUser = userService.findByUsername(userDetails.getUsername());
+    User user = currentUser.orElse(null); // Gestisci il caso in cui l'utente non sia presente
 
-        // Ottieni tutti i progetti
-        Optional<User> currentUser = userService.findByUsername(userDetails.getUsername());
+    // Inizializza le liste
+    List<Project> projects = Collections.emptyList();
+    List<Task> allTasks = Collections.emptyList();
 
-        List<Project> projects = null;
-        if (currentUser.isPresent()) {
-            projects = projectService.findProjectsByUser(currentUser.get());
-        }
+    if (user != null) {
+        // Trova tutti i progetti associati all'utente
+        projects = projectService.findProjectsByUser(user);
+        
+        // Raccogli tutte le task dai progetti dell'utente
+        allTasks = projects.stream()
+                .flatMap(project -> project.getTasks().stream())
+                .toList();
+        
+        model.addAttribute("allTasks", allTasks);
 
-        model.addAttribute("user", userDetails);
-        model.addAttribute("projects", projects);
-
-        // Task di oggi (con deadline oggi)
-        LocalDateTime todayStart = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT);
-        LocalDateTime todayEnd = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
-        List<Task> todayTasks = taskService.findTasksByDeadlineBetween(todayStart, todayEnd);
-        model.addAttribute("todayTasks", todayTasks);
-
-        // Task completate
-        List<Task> completedTasks = taskService.findTasksByStatus(TaskStatus.COMPLETED);
-        model.addAttribute("completedTasks", completedTasks);
-
-        // Calcola le percentuali per i grafici
-        int totalTasks = allTasks.size();
-        if (totalTasks > 0) {
-            int completedCount = (int) allTasks.stream().filter(t -> t.getStatus() == TaskStatus.COMPLETED).count();
-            int inProgressCount = (int) allTasks.stream().filter(t -> t.getStatus() == TaskStatus.WORK_IN_PROGRESS).count();
-            int pendingCount = (int) allTasks.stream().filter(t -> t.getStatus() == TaskStatus.PENDING || t.getStatus() == TaskStatus.STARTED).count();
-
-            int completedPercentage = (completedCount * 100) / totalTasks;
-            int inProgressPercentage = (inProgressCount * 100) / totalTasks;
-            int pendingPercentage = (pendingCount * 100) / totalTasks;
-
-            model.addAttribute("completedPercentage", completedPercentage);
-            model.addAttribute("inProgressPercentage", inProgressPercentage);
-            model.addAttribute("pendingPercentage", pendingPercentage);
-        } else {
-            model.addAttribute("completedPercentage", 0);
-            model.addAttribute("inProgressPercentage", 0);
-            model.addAttribute("pendingPercentage", 0);
-        }
-
-        return "index";
+        
     }
+
+    // Aggiungi attributi al modello
+    model.addAttribute("user", userDetails); // Passa UserDetails (o user, se preferisci)
+    model.addAttribute("projects", projects);
+
+    // Task con deadline di oggi
+    LocalDateTime todayStart = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT);
+    LocalDateTime todayEnd = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+    List<Task> todayTasks = taskService.findTasksByDeadlineBetween(todayStart, todayEnd);
+    model.addAttribute("todayTasks", todayTasks);
+
+    // Task completate (solo dell'utente, se vuoi filtrarle)
+    List<Task> completedTasks = allTasks.stream()
+            .filter(task -> task.getStatus() == TaskStatus.COMPLETED)
+            .toList();
+    model.addAttribute("completedTasks", completedTasks);
+
+    // Calcola le percentuali per i grafici
+    int totalTasks = allTasks.size();
+    if (totalTasks > 0) {
+        int completedCount = completedTasks.size(); // Usa la lista già filtrata
+        int inProgressCount = (int) allTasks.stream()
+                .filter(t -> t.getStatus() == TaskStatus.WORK_IN_PROGRESS)
+                .count();
+        int pendingCount = (int) allTasks.stream()
+                .filter(t -> t.getStatus() == TaskStatus.PENDING || t.getStatus() == TaskStatus.STARTED)
+                .count();
+
+        int completedPercentage = (completedCount * 100) / totalTasks;
+        int inProgressPercentage = (inProgressCount * 100) / totalTasks;
+        int pendingPercentage = (pendingCount * 100) / totalTasks;
+
+        model.addAttribute("completedPercentage", completedPercentage);
+        model.addAttribute("inProgressPercentage", inProgressPercentage);
+        model.addAttribute("pendingPercentage", pendingPercentage);
+    } else {
+        model.addAttribute("completedPercentage", 0);
+        model.addAttribute("inProgressPercentage", 0);
+        model.addAttribute("pendingPercentage", 0);
+    }
+
+    return "index";
+}
 }

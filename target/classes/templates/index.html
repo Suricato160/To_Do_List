@@ -58,7 +58,8 @@
                 <div class="task-card text-center">
                     <i class="fas fa-clipboard-list fa-2x mb-2" style="color: #ff6f61;"></i>
                     <h5>Attività Totali</h5>
-                    <h2 th:text="${tasks != null ? #lists.size(tasks) : 0}">0</h2>
+                    <h2 th:text="${allTasks != null ? #lists.size(allTasks) : 0}">0</h2>
+
                 </div>
             </div>
             <div class="col-md-3">
