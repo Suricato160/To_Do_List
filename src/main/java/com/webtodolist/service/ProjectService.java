@@ -14,19 +14,12 @@ import java.util.Optional;
 @Service
 public class ProjectService {
 
-
-
-
-
-
     @Autowired
     private ProjectRepository projectRepository; // Repository per accedere ai dati dei progetti
 
-   
     public List<Project> getAllProjects() {
         return projectRepository.findAll(); // Metodo per ottenere tutti i progetti
     }
-
 
     public Project findById(Long projectId) {
         Optional<Project> project = projectRepository.findById(projectId.intValue());
@@ -35,5 +28,13 @@ public class ProjectService {
 
     public List<Project> findProjectsByUser(User user) {
         return projectRepository.findByUser(user);
+    }
+
+    public List<Project> searchProjectsByTitle(String title) {
+        return projectRepository.findByTitleContainingIgnoreCase(title);
+    }
+
+    public void saveProject(Project project) {
+        projectRepository.save(project);
     }
 }
