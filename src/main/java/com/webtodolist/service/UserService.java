@@ -28,7 +28,7 @@ public class UserService {
 
     public String getFullName(User user) {
         if (user != null && user.getNome() != null && user.getCognome() != null) {
-            return user.getNome() + " " + user.getCognome();
+            return user.getNome() + " " + user.getCognome() + " ("+ user.getMansione() + ")";
         }
         return user != null && user.getNome() != null ? user.getNome() : "Utente sconosciuto";
     }

@@ -30,7 +30,7 @@
         <!-- Header -->
         <div class="header mb-4">
             <div class="d-flex align-items-center">
-                <a th:href="@{/task-list}" class="btn btn-outline-secondary me-3">
+                <a th:href="@{/task-list}" class="btn btn-outline_secondary me-3">
                     <i class="fas fa-arrow-left"></i>
                 </a>
                 <h2><i class="fas fa-edit"></i> Modifica Task</h2>
@@ -44,10 +44,7 @@
                 <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
                 <form th:action="@{/tasks/update}" th:object="${task}" method="post">
-                    <!-- Campo nascosto per l'ID della task -->
                     <input type="hidden" th:field="*{id}">
-
-                    <!-- Passa il projectId come campo nascosto se presente -->
                     <input type="hidden" th:name="projectId" th:value="${project?.id}" th:if="${project != null}">
 
                     <div class="mb-3">
@@ -62,7 +59,7 @@
 
                     <div class="mb-3">
                         <label for="dataDeadline" class="form-label">Data di Scadenza</label>
-                        <input type="datetime-local" class="form-control" id="dataDeadline" th:field="*{dataDeadline}" th:value="${#temporals.format(task.dataDeadline, 'yyyy-MM-dd\'T\'HH:mm')}">
+                        <input type="datetime-local" class="form-control" id="dataDeadline" th:field="*{dataDeadline}">
                     </div>
 
                     <div class="mb-3">
@@ -99,13 +96,12 @@
                         </select>
                     </div>
 
-                    <!-- Mostra il progetto come readonly se passato dal contesto -->
                     <div class="mb-3" th:if="${project != null}">
                         <label for="project" class="form-label">Progetto</label>
                         <input type="text" class="form-control" id="project" th:value="${project.title}" readonly>
                         <input type="hidden" th:field="*{project.id}">
                     </div>
-                    <!-- Mostra il select solo se non c'è un progetto predefinito -->
+
                     <div class="mb-3" th:unless="${project != null}">
                         <label for="project" class="form-label">Progetto*</label>
                         <select class="form-select" id="project" th:field="*{project.id}" required>
