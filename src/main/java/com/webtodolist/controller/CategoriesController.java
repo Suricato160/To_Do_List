@@ -1,9 +1,9 @@
 package com.webtodolist.controller;
 
-import java.util.HashSet;
+
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -37,18 +37,14 @@ public class CategoriesController {
         Optional<User> currentUser = userRepository.findByUsername(userDetails.getUsername());
         
         if (currentUser.isPresent()) {
-            model.addAttribute("user", currentUser.get());
+            User user = currentUser.get();
+            model.addAttribute("user", user);
             
-            // Get all tasks to extract categories
-            List<Task> tasks = taskRepository.findByUser(currentUser.get());
-            Set<String> categories = new HashSet<>();
+            // Get distinct categories directly from database
+            List<String> categories = taskRepository.findDistinctCategoriesByUser(user);
             
-            // Extract unique categories
-            for (Task task : tasks) {
-                if (task.getCategoria() != null && !task.getCategoria().isEmpty()) {
-                    categories.add(task.getCategoria());
-                }
-            }
+            // Get tasks to count per category
+            List<Task> tasks = taskRepository.findByUser(user);
             
             model.addAttribute("categories", categories);
             model.addAttribute("taskCounts", countTasksPerCategory(tasks));

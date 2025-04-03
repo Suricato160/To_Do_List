@@ -50,4 +50,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
+    // Update theme icon
+    const themeIcon = document.getElementById('themeIcon');
+    if (themeIcon) {
+        themeIcon.className = isDarkMode ? 'fas fa-moon' : 'fas fa-sun';
+        
+        // Update icon when theme changes
+        darkModeSwitch?.addEventListener('change', function() {
+            themeIcon.className = this.checked ? 'fas fa-moon' : 'fas fa-sun';
+        });
+    }
 });
