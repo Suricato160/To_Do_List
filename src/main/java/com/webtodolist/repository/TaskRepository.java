@@ -9,6 +9,8 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
@@ -18,4 +20,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByStatus(TaskStatus completed);
 
     List<Task> findByUser(User user);
+
+    @Query("SELECT DISTINCT t.categoria FROM Task t WHERE t.user = :user AND t.categoria IS NOT NULL AND t.categoria <> ''")
+    List<String> findDistinctCategoriesByUser(@Param("user") User user);
 }
