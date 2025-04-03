@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TaskService {
@@ -50,5 +51,10 @@ public class TaskService {
 
         // Salva la task nel database
         taskRepository.save(task);
+    }
+
+    public Task findTaskById(Long id) {
+        Optional<Task> task = taskRepository.findById(id);
+        return task.orElse(null); // Restituisce null se non trovata, oppure puoi lanciare un'eccezione
     }
 }

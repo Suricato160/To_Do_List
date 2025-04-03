@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service; // Import the annotation
+import org.springframework.stereotype.Service;
 
 import com.webtodolist.model.User;
 import com.webtodolist.repository.UserRepository;
 
-@Service // Add this annotation
+@Service
 public class UserService {
     @Autowired
     private UserRepository userRepository;
@@ -26,4 +26,10 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
+    public String getFullName(User user) {
+        if (user != null && user.getNome() != null && user.getCognome() != null) {
+            return user.getNome() + " " + user.getCognome();
+        }
+        return user != null && user.getNome() != null ? user.getNome() : "Utente sconosciuto";
+    }
 }
