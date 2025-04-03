@@ -54,20 +54,17 @@
         </div>
 
         <!-- Search Bar -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <form th:action="@{/projects/search}" method="get" class="d-flex">
-                    <input type="text" name="query" class="form-control me-2" placeholder="Cerca progetti..." 
-                           th:value="${searchQuery}" aria-label="Cerca">
-                    <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search"></i></button>
-                </form>
+        <div class="mb-4">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                <input type="text" id="projectSearch" class="form-control" placeholder="Cerca progetti...">
             </div>
         </div>
 
         <!-- Projects List -->
-        <div class="row">
-            <div th:each="project : ${projects}" class="col-md-4 mb-4">
-                <div class="card h-100">
+        <div class="row" id="projectsContainer">
+            <div th:each="project : ${projects}" class="col-md-4 mb-4 project-item">
+                <div class="card h-100 border-left-project">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0" th:text="${project.title}">Titolo Progetto</h5>
                         <span class="badge" th:classappend="${project.dataClosedProject != null ? 'bg-success' : 'bg-primary'}"
@@ -100,19 +97,37 @@
     <script src="/js/theme.js"></script>
     <script src="/js/sidebar.js"></script>
     <script>
-        // Aggiunge funzionalità per cambiare l'icona in base al tema
         document.addEventListener('DOMContentLoaded', function() {
+            // Search functionality
+            const searchInput = document.getElementById('projectSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const projectItems = document.querySelectorAll('.project-item');
+                    
+                    projectItems.forEach(function(item) {
+                        const projectTitle = item.querySelector('.card-title').textContent.toLowerCase();
+                        const projectDescription = item.querySelector('.card-text').textContent.toLowerCase();
+                        
+                        if (projectTitle.includes(searchTerm) || projectDescription.includes(searchTerm)) {
+                            item.style.display = '';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
+            // Theme icon functionality
             const darkModeSwitch = document.getElementById('darkModeSwitch');
             const themeIcon = document.getElementById('themeIcon');
             
-            // Imposta l'icona corretta all'avvio
             if (localStorage.getItem('darkMode') === 'true') {
                 themeIcon.className = 'fas fa-moon';
             } else {
                 themeIcon.className = 'fas fa-sun';
             }
             
-            // Cambia l'icona quando si cambia il tema
             darkModeSwitch.addEventListener('change', function() {
                 if (this.checked) {
                     themeIcon.className = 'fas fa-moon';
@@ -122,5 +137,16 @@
             });
         });
     </script>
+    <style>
+        /* Custom styles for project cards */
+        .border-left-project {
+            border-left: 4px solid #0d6efd;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .border-left-project:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+    </style>
 </body>
 </html>

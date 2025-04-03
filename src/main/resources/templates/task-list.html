@@ -31,17 +31,24 @@
     <div class="main-content">
         <!-- Header -->
         <div class="header">
-            <input type="text" class="search-bar form-control" placeholder="Cerca tasks..." id="searchInput">
-            <input type="hidden" id="taskId">
-            <div class="icons">
-                <i class="fas fa-search"></i>
-                <i class="fas fa-bell"></i>
-                <i class="fas fa-calendar-alt"></i>
-                <span th:text="${#temporals.format(#temporals.createNow(), 'EEEE dd/MM/yyyy')}">Martedì 20/06/2023</span>
-                <div class="form-check form-switch d-inline-block ms-3">
-                    <input class="form-check-input" type="checkbox" id="darkModeSwitch">
-                    <label class="form-check-label" for="darkModeSwitch"><i id="themeIcon" class="fas fa-moon"></i></label>
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <h2><i class="fas fa-tasks"></i> Lista Task</h2>
+                <div class="d-flex align-items-center">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="darkModeSwitch">
+                        <label class="form-check-label" for="darkModeSwitch">
+                            <i id="themeIcon" class="fas fa-moon"></i>
+                        </label>
+                    </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="mb-4">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                <input type="text" id="taskSearch" class="form-control" placeholder="Cerca task...">
             </div>
         </div>
 
@@ -72,8 +79,8 @@
                                     <th>Azioni</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr th:each="task : ${tasks}" th:id="'task-' + ${task.id}">
+                            <tbody id="taskTableBody">
+                                <tr th:each="task : ${tasks}" th:id="'task-' + ${task.id}" class="task-item">
                                     <td th:text="${task.id}">ID</td>
                                     <td th:text="${task.titolo}">Titolo</td>
                                     <td th:text="${task.descrizione}">Descrizione</td>
@@ -105,103 +112,33 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+        <script src="/js/theme.js"></script>
         <script>
-            $(document).ready(function() {
-                const taskTable = $('#taskTable');
-                const tbody = taskTable.find('tbody');
-
-                // Funzione per aggiornare la tabella
-                function updateTable(taskId) {
-                    $.get('/tasks/detail?taskId=' + taskId, function(data) {
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(data, 'text/html');
-                        const task = {
-                            id: $(doc).find('input[name="taskId"]').val(),
-                            titolo: $(doc).find('h2').text(),
-                            descrizione: $(doc).find('p:contains("Descrizione") span').text(),
-                            status: $(doc).find('p:contains("Stato corrente") strong').text(),
-                            priority: $(doc).find('p:contains("Priorità") span').text(),
-                            dataDeadline: $(doc).find('p:contains("Scadenza") span').text(),
-                            categoria: $(doc).find('p:contains("Categoria") span').text(),
-                            assigner: $(doc).find('p:contains("Creato da") span').text() || 'N/A',
-                            user: $(doc).find('p:contains("Assegnato a") span').text(),
-                            dataCreatedTask: $(doc).find('p:contains("Creato il") span').text()
-                        };
-
-                        tbody.empty();
-                        if (task.id) {
-                            const row = `
-                                <tr id="task-${task.id}">
-                                    <td>${task.id}</td>
-                                    <td>${task.titolo}</td>
-                                    <td>${task.descrizione}</td>
-                                    <td>${task.status}</td>
-                                    <td>${task.priority}</td>
-                                    <td>${task.dataDeadline}</td>
-                                    <td>${task.categoria}</td>
-                                    <td>${task.assigner}</td>
-                                    <td>${task.user}</td>
-                                    <td>${task.dataCreatedTask}</td>
-                                    <td>
-                                        <div class="btn-group btn-group-sm" role="group">
-                                            <a href="/tasks/detail?taskId=${task.id}" class="btn btn-outline-primary"><i class="fas fa-eye"></i></a>
-                                            <a href="/tasks/edit?taskId=${task.id}" class="btn btn-outline-warning"><i class="fas fa-edit"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            `;
-                            tbody.append(row);
-                        } else {
-                            tbody.append('<tr><td colspan="11" class="text-center">Nessuna task trovata</td></tr>');
-                        }
-                    });
-                }
-
-                // Configurazione Autocomplete
-                $("#searchInput").autocomplete({
-                    source: function(request, response) {
-                        $.ajax({
-                            url: "/tasks/autocomplete",
-                            data: { term: request.term },
-                            headers: {
-                                [document.querySelector('meta[name="_csrf_header"]').getAttribute('content')]: 
-                                document.querySelector('meta[name="_csrf"]').getAttribute('content')
-                            },
-                            success: function(data) {
-                                response(data);
+            document.addEventListener('DOMContentLoaded', function() {
+                // Search functionality
+                const searchInput = document.getElementById('taskSearch');
+                if (searchInput) {
+                    searchInput.addEventListener('input', function() {
+                        const searchTerm = this.value.toLowerCase();
+                        const taskItems = document.querySelectorAll('.task-item');
+                        
+                        taskItems.forEach(function(item) {
+                            const taskTitle = item.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                            const taskDescription = item.querySelector('td:nth-child(3)').textContent.toLowerCase();
+                            const taskCategory = item.querySelector('td:nth-child(7)').textContent.toLowerCase();
+                            
+                            if (taskTitle.includes(searchTerm) || 
+                                taskDescription.includes(searchTerm) || 
+                                taskCategory.includes(searchTerm)) {
+                                item.style.display = '';
+                            } else {
+                                item.style.display = 'none';
                             }
                         });
-                    },
-                    minLength: 2,
-                    select: function(event, ui) {
-                        this.value = ui.item.label;
-                        $("#taskId").val(ui.item.value);
-                        updateTable(ui.item.value);
-                        return false;
-                    }
-                });
-
-                // Ricerca esatta con Invio
-                $("#searchInput").on('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        const query = this.value.trim();
-                        if (query) {
-                            $.getJSON(`/tasks/autocomplete?term=${encodeURIComponent(query)}`, function(data) {
-                                const exactMatch = data.find(item => item.label.toLowerCase() === query.toLowerCase());
-                                if (exactMatch) {
-                                    $("#searchInput").val(exactMatch.label);
-                                    $("#taskId").val(exactMatch.value);
-                                    updateTable(exactMatch.value);
-                                } else {
-                                    tbody.empty().append('<tr><td colspan="11" class="text-center">Nessuna task trovata</td></tr>');
-                                }
-                            });
-                        }
-                    }
-                });
+                    });
+                }
             });
         </script>
-        <script src="/js/theme.js"></script>
     </div>
 </body>
 </html>

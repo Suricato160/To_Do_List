@@ -56,7 +56,7 @@
 
         <!-- Welcome Message -->
         <div class="welcome-message">
-            Bentornato, <span th:text="${user != null ? user.username : 'Utente'}">Utente</span> <span
+            Bentornato, <span th:text="${user != null ? userService.getFullName(user) : 'Utente'}">Utente</span> <span
                 class="emoji">👋</span>
 
         </div>

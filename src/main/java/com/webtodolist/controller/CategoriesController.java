@@ -75,7 +75,8 @@ public class CategoriesController {
             List<Task> allTasks = new ArrayList<>();
             allTasks.addAll(directTasks);
             allTasks.addAll(projectTasks);
-            
+            model.addAttribute("userService", userService);
+
             model.addAttribute("categories", mergedCategories);
             model.addAttribute("taskCounts", countTasksPerCategory(allTasks));
         }
