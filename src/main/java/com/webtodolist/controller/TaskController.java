@@ -7,8 +7,14 @@ import com.webtodolist.service.CustomUserDetails;
 import com.webtodolist.service.ProjectService;
 import com.webtodolist.service.TaskService;
 import com.webtodolist.service.UserService;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +35,11 @@ public class TaskController {
     private ProjectService projectService;
 
     @GetMapping("/task-list")
-    public String getTaskList(Model model) {
+    public String getTaskList(Model model,
+                            @AuthenticationPrincipal UserDetails userDetails) {
+        
+        model.addAttribute("user", userDetails);
+
         model.addAttribute("tasks", taskService.getAllTasks());
         return "task-list";
     }

@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import com.webtodolist.model.Task;
 import com.webtodolist.model.Task.TaskStatus;
@@ -26,16 +28,24 @@ public class DashboardController {
     
     @Autowired
     private ProjectRepository projectRepository;
+
     
     @GetMapping({"/", "/index"})
-    public String dashboard(Model model) {
+    public String dashboard(Model model,
+                            @AuthenticationPrincipal UserDetails userDetails) {
         // Ottieni tutte le task
         List<Task> allTasks = taskRepository.findAll();
         model.addAttribute("tasks", allTasks);
-        
+
         // Ottieni tutti i progetti
         List<Project> projects = projectRepository.findAll();
         model.addAttribute("projects", projects);
+
+        // Ottieni l'utente autenticato
+        model.addAttribute("user", userDetails);
+        
+        
+        
         
         // Task di oggi (con deadline oggi)
         LocalDateTime todayStart = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT);

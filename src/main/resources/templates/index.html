@@ -17,9 +17,9 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="profile">
-            <img src="https://via.placeholder.com/80" alt="Profile Picture">
+            <img src="/img/user.png" alt="Profile Picture">
+
             <h5 th:text="${user != null ? user.username : 'Utente'}">Utente</h5>
-            <p th:text="${user != null ? user.email : 'email@example.com'}">email@example.com</p>
         </div>
         <nav>
             <a href="/index" class="nav-link active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
@@ -49,6 +49,7 @@
         <div class="welcome-message">
             Bentornato, <span th:text="${user != null ? user.username : 'Utente'}">Utente</span> <span
                 class="emoji">👋</span>
+
         </div>
 
         <!-- Dashboard Overview -->

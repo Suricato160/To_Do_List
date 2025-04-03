@@ -40,11 +40,11 @@ public class ProjectController {
         List<Project> projects;
         if (currentUser.isPresent()) {
             projects = projectRepository.findByUser(currentUser.get());
-            model.addAttribute("user", currentUser.get());
         } else {
-            projects = projectRepository.findAll();
+            projects = null;
         }
-        
+
+        model.addAttribute("user", userDetails);
         model.addAttribute("projects", projects);
         return "projects";
     }
