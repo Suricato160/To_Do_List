@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.webtodolist.model.Comment;
 
-public interface CommentRepository extends JpaRepository<Comment, Integer> {
-    List<Comment> findByTaskId(int taskId);
+public interface CommentRepository extends JpaRepository<Comment, Long> {
+    List<Comment> findByTaskId(Long taskId);
     
     List<Comment> findByUserId(int userId);
     

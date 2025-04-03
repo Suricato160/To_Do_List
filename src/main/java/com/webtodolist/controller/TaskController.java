@@ -1,13 +1,16 @@
 package com.webtodolist.controller;
 
+import com.webtodolist.model.Comment;
 import com.webtodolist.model.Project;
 import com.webtodolist.model.Task;
 import com.webtodolist.model.User;
+import com.webtodolist.service.CommentService;
 import com.webtodolist.service.CustomUserDetails;
 import com.webtodolist.service.ProjectService;
 import com.webtodolist.service.TaskService;
 import com.webtodolist.service.UserService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +24,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 public class TaskController {
@@ -34,14 +41,15 @@ public class TaskController {
     @Autowired
     private ProjectService projectService;
 
-    
+    @Autowired
+    private CommentService commentService;
 
-    
+    private static final Logger logger = LoggerFactory.getLogger(TaskController.class);
 
     @GetMapping("/task-list")
     public String getTaskList(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         Optional<User> currentUser = userService.findByUsername(userDetails.getUsername());
-    
+
         List<Task> tasks = null;
         if (currentUser.isPresent()) {
             List<Project> projects = projectService.findProjectsByUser(currentUser.get());
@@ -52,13 +60,11 @@ public class TaskController {
         } else {
             model.addAttribute("user", null);
         }
-    
+
         model.addAttribute("tasks", tasks);
         model.addAttribute("userService", userService);
         return "task-list";
     }
-
-
 
     @GetMapping("/tasks/new")
     public String newTask(@RequestParam(value = "projectId", required = false) Long projectId, Model model) {
@@ -81,10 +87,12 @@ public class TaskController {
     }
 
     @PostMapping("/tasks/create")
-    public String createTask(@ModelAttribute("task") Task task, @RequestParam(value = "projectId", required = false) Long projectId, Model model) {
+    public String createTask(@ModelAttribute("task") Task task,
+            @RequestParam(value = "projectId", required = false) Long projectId, Model model) {
         try {
             // Ottieni CustomUserDetails dal contesto di sicurezza
-            CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+                    .getPrincipal();
             User currentUser = userDetails.getUser(); // Estrai l'entità User
 
             task.setAssigner(currentUser);
@@ -111,70 +119,150 @@ public class TaskController {
     }
 
     @GetMapping("/tasks/edit")
-public String editTask(@RequestParam("taskId") Long taskId, Model model) {
-    Task task = taskService.findTaskById(taskId);
-    if (task == null) {
-        return "redirect:/task-list"; // Task non trovata, torna alla lista
-    }
-
-    model.addAttribute("task", task);
-    model.addAttribute("project", task.getProject()); // Progetto associato, se presente
-    model.addAttribute("users", userService.getAllUsers());
-    model.addAttribute("projects", projectService.getAllProjects());
-    model.addAttribute("userService", userService); // Per il nome completo nella sidebar
-    Optional<User> currentUser = userService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
-    model.addAttribute("user", currentUser.orElse(null)); // Utente autenticato
-    return "taskEdit";
-}
-
-@PostMapping("/tasks/update")
-public String updateTask(@ModelAttribute("task") Task task, 
-                         @RequestParam(value = "projectId", required = false) Long projectId, 
-                         Model model) {
-    try {
-        // Recupera la task esistente
-        Task existingTask = taskService.findTaskById(task.getId());
-        if (existingTask == null) {
-            throw new IllegalArgumentException("Task non trovata");
+    public String editTask(@RequestParam("taskId") Long taskId, Model model) {
+        Task task = taskService.findTaskById(taskId);
+        if (task == null) {
+            return "redirect:/task-list"; // Task non trovata, torna alla lista
         }
 
-        // Aggiorna i campi
-        existingTask.setTitolo(task.getTitolo());
-        existingTask.setDescrizione(task.getDescrizione());
-        existingTask.setDataDeadline(task.getDataDeadline());
-        existingTask.setCategoria(task.getCategoria());
-        existingTask.setPriority(task.getPriority());
-        existingTask.setStatus(task.getStatus());
-
-        // Aggiorna l'utente assegnato
-        Optional<User> assignedUser = userService.findById(task.getUser().getId());
-        if (assignedUser.isPresent()) {
-            existingTask.setUser(assignedUser.get());
-        } else {
-            throw new IllegalArgumentException("Utente non trovato");
-        }
-
-        // Aggiorna il progetto, se specificato
-        if (projectId != null) {
-            Project project = projectService.findById(projectId);
-            if (project == null) {
-                throw new IllegalArgumentException("Progetto non trovato");
-            }
-            existingTask.setProject(project);
-        }
-
-        taskService.saveTask(existingTask);
-        return "redirect:/task-list"; // O torna al dettaglio del progetto: /projects/{projectId}
-    } catch (IllegalArgumentException e) {
-        model.addAttribute("error", e.getMessage());
         model.addAttribute("task", task);
+        model.addAttribute("project", task.getProject()); // Progetto associato, se presente
         model.addAttribute("users", userService.getAllUsers());
         model.addAttribute("projects", projectService.getAllProjects());
-        model.addAttribute("project", projectId != null ? projectService.findById(projectId) : null);
-        model.addAttribute("userService", userService);
-        Optional<User> currentUser = userService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
-        model.addAttribute("user", currentUser.orElse(null));
+        model.addAttribute("userService", userService); // Per il nome completo nella sidebar
+        Optional<User> currentUser = userService
+                .findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        model.addAttribute("user", currentUser.orElse(null)); // Utente autenticato
         return "taskEdit";
     }
+
+    @PostMapping("/tasks/update")
+    public String updateTask(@ModelAttribute("task") Task task,
+            @RequestParam(value = "projectId", required = false) Long projectId,
+            Model model) {
+        try {
+            // Recupera la task esistente
+            Task existingTask = taskService.findTaskById(task.getId());
+            if (existingTask == null) {
+                throw new IllegalArgumentException("Task non trovata");
+            }
+
+            // Aggiorna i campi
+            existingTask.setTitolo(task.getTitolo());
+            existingTask.setDescrizione(task.getDescrizione());
+            existingTask.setDataDeadline(task.getDataDeadline());
+            existingTask.setCategoria(task.getCategoria());
+            existingTask.setPriority(task.getPriority());
+            existingTask.setStatus(task.getStatus());
+
+            // Aggiorna l'utente assegnato
+            Optional<User> assignedUser = userService.findById(task.getUser().getId());
+            if (assignedUser.isPresent()) {
+                existingTask.setUser(assignedUser.get());
+            } else {
+                throw new IllegalArgumentException("Utente non trovato");
+            }
+
+            // Aggiorna il progetto, se specificato
+            if (projectId != null) {
+                Project project = projectService.findById(projectId);
+                if (project == null) {
+                    throw new IllegalArgumentException("Progetto non trovato");
+                }
+                existingTask.setProject(project);
+            }
+
+            taskService.saveTask(existingTask);
+            return "redirect:/task-list"; // O torna al dettaglio del progetto: /projects/{projectId}
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("task", task);
+            model.addAttribute("users", userService.getAllUsers());
+            model.addAttribute("projects", projectService.getAllProjects());
+            model.addAttribute("project", projectId != null ? projectService.findById(projectId) : null);
+            model.addAttribute("userService", userService);
+            Optional<User> currentUser = userService
+                    .findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+            model.addAttribute("user", currentUser.orElse(null));
+            return "taskEdit";
+        }
+    }
+
+    // Add these methods to TaskController.java
+
+    @GetMapping("/tasks/detail")
+public String viewTaskDetail(@RequestParam("taskId") Long taskId, Model model) {
+    Task task = taskService.findTaskById(taskId);
+    if (task == null) {
+        logger.warn("Task non trovata per id={}", taskId);
+        return "redirect:/task-list";
+    }
+    logger.info("Task recuperata: id={}, status={}", task.getId(), task.getStatus());
+
+    model.addAttribute("task", task);
+    model.addAttribute("comment", new Comment());
+    model.addAttribute("comments", task.getComments());
+    model.addAttribute("userService", userService);
+    Optional<User> currentUser = userService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+    model.addAttribute("user", currentUser.orElse(null));
+    return "taskDetail";
+}
+
+    @PostMapping("/tasks/status/update")
+public String updateTaskStatus(@RequestParam("taskId") Long taskId, 
+                              @RequestParam("status") String status, 
+                              RedirectAttributes redirectAttributes) {
+    logger.info("Aggiornamento stato: taskId={}, status={}", taskId, status);
+    Task task = taskService.findTaskById(taskId);
+    if (task != null) {
+        try {
+            Task.TaskStatus newStatus = Task.TaskStatus.valueOf(status.toUpperCase());
+            task.setStatus(newStatus);
+            taskService.saveTask(task); // Ora è transazionale
+            redirectAttributes.addFlashAttribute("successMessage", "Stato aggiornato con successo!");
+        } catch (IllegalArgumentException e) {
+            logger.error("Errore conversione stato: {}", status, e);
+            redirectAttributes.addFlashAttribute("errorMessage", "Stato non valido: " + status);
+        }
+    } else {
+        redirectAttributes.addFlashAttribute("errorMessage", "Task non trovata.");
+    }
+    return "redirect:/tasks/detail?taskId=" + taskId;
+}
+
+    @PostMapping("/comments/create")
+    public String createComment(@ModelAttribute("comment") Comment comment,
+            @RequestParam("taskId") Long taskId) {
+        Task task = taskService.findTaskById(taskId);
+        if (task != null) {
+            User currentUser = userService
+                    .findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
+                    .orElseThrow(() -> new IllegalStateException("User not found"));
+            comment.setTask(task);
+            comment.setUser(currentUser);
+            comment.setDataComment(LocalDateTime.now());
+            commentService.saveComment(comment);
+        }
+        return "redirect:/tasks/detail?taskId=" + taskId;
+    }
+
+    @PostMapping("/comments/update")
+public String updateComment(@RequestParam("commentId") Long commentId,
+                          @RequestParam("text") String text,
+                          @RequestParam("taskId") Long taskId) {
+    logger.info("Aggiornamento commento: commentId={}, taskId={}, text={}", commentId, taskId, text);
+    Comment comment = commentService.findCommentById(commentId);
+    if (comment != null) {
+        User currentUser = userService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+        if (comment.getUser().getId().equals(currentUser.getId())) {
+            comment.setText(text);
+            commentService.saveComment(comment);
+            logger.info("Commento aggiornato con successo");
+        } else {
+            logger.warn("Utente non autorizzato a modificare il commento");
+        }
+    }
+    return "redirect:/tasks/detail?taskId=" + taskId;
 }
 }
