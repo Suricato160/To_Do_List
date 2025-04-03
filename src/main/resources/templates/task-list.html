@@ -27,86 +27,6 @@
         </nav>
     </div>
 
-<<<<<<< HEAD
-<!--====================================================================================  -->
-
- <!-- Main Content -->
- <div class="main-content">
-    <!-- Header -->
-    <div class="header">
-        <div class="d-flex justify-content-between align-items-center w-100">
-            <input type="text" class="search-bar" placeholder="Cerca tasks...">
-            <div class="d-flex align-items-center">
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="darkModeSwitch">
-                    <label class="form-check-label" for="darkModeSwitch">
-                        <i id="themeIcon" class="fas fa-sun"></i>
-                    </label>
-                </div>
-            </div>
-        </div>
-        <!-- <div class="icons">
-            <i class="fas fa-search"></i>
-            <i class="fas fa-bell"></i>
-            <i class="fas fa-calendar-alt"></i>
-            <span th:text="${#temporals.format(#temporals.createNow(), 'EEEE dd/MM/yyyy')}">Martedì
-                20/06/2023</span>
-        </div> -->
-    </div>
-
-    
-
-    
-
-    <!-- Projects Section -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="task-card">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5><i class="fas fa-project-diagram me-2"></i> Lista Task Completa</h5>
-                    <a th:href="@{/tasks/new}" class="btn btn-sm btn-primary">
-                        <i class="fas fa-plus"></i> New Task
-                    </a>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Titolo</th>
-                                <th>Descrizione</th>
-                                <th>Stato</th>
-                                <th>Completato</th>
-                                <th>Scadenza</th>
-                                <th>Categoria</th>
-                                <th>Creato da</th> <!-- Updated column header -->
-                                <th>Assegnato a</th>
-                                <th>Creato il</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="task : ${tasks}">
-                                <td th:text="${task.id}">ID</td>
-                                <td th:text="${task.titolo}">Titolo</td>
-                                <td th:text="${task.descrizione}">Descrizione</td>
-                                <td th:text="${task.status}">Stato</td>
-                                <td th:text="${task.priority}">Completato</td>
-                                <td th:text="${task.dataDeadline}">Scadenza</td>
-                                <td th:text="${task.categoria}">Categoria</td>
-                                <td th:text="${task.assigner != null ? userService.getFullName(task.assigner) : 'N/A'}">N/A</td>
-                                <td th:text="${task.user != null ? userService.getFullName(task.user) : 'N/A'}">N/A</td>
-                                <td th:text="${task.dataCreatedTask}">Creato il</td>
-                                <td>
-                                    <div class="btn-group btn-group-sm" role="group">
-                                        <a th:href="@{/tasks/edit(taskId=${task.id})}" class="btn btn-outline-warning"><i class="fas fa-edit"></i></a>                                    </div>
-                                </td>
-                            </tr>
-                            <tr th:if="${tasks == null or #lists.isEmpty(tasks)}">
-                                <td colspan="10" class="text-center">Nessuna task disponibile</td>
-                            </tr>
-                        </tbody>
-                    </table>
-=======
     <!-- Main Content -->
     <div class="main-content">
         <!-- Header -->
@@ -121,7 +41,6 @@
                 <div class="form-check form-switch d-inline-block ms-3">
                     <input class="form-check-input" type="checkbox" id="darkModeSwitch">
                     <label class="form-check-label" for="darkModeSwitch"><i id="themeIcon" class="fas fa-moon"></i></label>
->>>>>>> 7815df4c525a60344f84535d6afe50340825c05c
                 </div>
             </div>
         </div>
@@ -240,32 +159,27 @@
 
                 // Configurazione Autocomplete
                 $("#searchInput").autocomplete({
-    source: function(request, response) {
-        $.ajax({
-            url: "/tasks/autocomplete",
-            data: { term: request.term },
-            headers: {
-                [document.querySelector('meta[name="_csrf_header"]').getAttribute('content')]: 
-                document.querySelector('meta[name="_csrf"]').getAttribute('content')
-            },
-            success: function(data) {
-                response(data);
-            }
-        });
-<<<<<<< HEAD
-    });
-</script>
-<script src="/js/sidebar.js"></script>
-=======
-    },
-    minLength: 2,
-    select: function(event, ui) {
-        this.value = ui.item.label;
-        $("#taskId").val(ui.item.value);
-        updateTable(ui.item.value);
-        return false;
-    }
-});
+                    source: function(request, response) {
+                        $.ajax({
+                            url: "/tasks/autocomplete",
+                            data: { term: request.term },
+                            headers: {
+                                [document.querySelector('meta[name="_csrf_header"]').getAttribute('content')]: 
+                                document.querySelector('meta[name="_csrf"]').getAttribute('content')
+                            },
+                            success: function(data) {
+                                response(data);
+                            }
+                        });
+                    },
+                    minLength: 2,
+                    select: function(event, ui) {
+                        this.value = ui.item.label;
+                        $("#taskId").val(ui.item.value);
+                        updateTable(ui.item.value);
+                        return false;
+                    }
+                });
 
                 // Ricerca esatta con Invio
                 $("#searchInput").on('keypress', function(e) {
@@ -288,25 +202,6 @@
             });
         </script>
         <script src="/js/theme.js"></script>
-        <script>
-            $(document).ready(function() {
-                const darkModeSwitch = $('#darkModeSwitch');
-                const themeIcon = $('#themeIcon');
-                if (localStorage.getItem('darkMode') === 'true') {
-                    themeIcon.removeClass().addClass('fas fa-moon');
-                } else {
-                    themeIcon.removeClass().addClass('fas fa-sun');
-                }
-                darkModeSwitch.on('change', function() {
-                    if (this.checked) {
-                        themeIcon.removeClass().addClass('fas fa-moon');
-                    } else {
-                        themeIcon.removeClass().addClass('fas fa-sun');
-                    }
-                });
-            });
-        </script>
     </div>
->>>>>>> 7815df4c525a60344f84535d6afe50340825c05c
 </body>
 </html>

@@ -308,8 +308,7 @@ public class TaskController {
             return label;
         }
     }
-}
-<<<<<<< HEAD
+
 
 @GetMapping("/tasks")
 public String getTasksByCategory(@RequestParam(value = "category", required = false) String categoryName,
@@ -323,6 +322,6 @@ public String getTasksByCategory(@RequestParam(value = "category", required = fa
     // Otherwise, show all tasks (or implement other filters)
     return "redirect:/task-list";
 }
+
 }
-=======
->>>>>>> 7815df4c525a60344f84535d6afe50340825c05c
+
