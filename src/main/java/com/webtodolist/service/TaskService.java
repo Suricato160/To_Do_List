@@ -29,7 +29,8 @@ public class TaskService {
         return taskRepository.findByStatus(status);
     }
 
-    public void saveTask(Task task) {
+    @Transactional
+    public Task saveTask(Task task) {
         // Verifica che i campi obbligatori siano valorizzati
         if (task.getTitolo() == null || task.getTitolo().isEmpty()) {
             throw new IllegalArgumentException("Il titolo della task è obbligatorio");
@@ -50,13 +51,19 @@ public class TaskService {
             throw new IllegalArgumentException("L'assigner è obbligatorio");
         }
 
-        // Salva la task nel database
-        taskRepository.save(task);
+        // Salva la task nel database e restituisci l'entità aggiornata
+        return taskRepository.save(task);
     }
 
     public Task findTaskById(Long id) {
         Optional<Task> task = taskRepository.findById(id);
-        return task.orElse(null); // Restituisce null se non trovata, oppure puoi lanciare un'eccezione
+        return task.orElse(null);
+    }
+
+
+    // Nuovo metodo per la ricerca
+    public List<Task> searchTasksByTitle(String query) {
+        return taskRepository.findByTitoloContainingIgnoreCase(query);
     }
 
     /**

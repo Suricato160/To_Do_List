@@ -1,10 +1,15 @@
 package com.webtodolist.controller;
 
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+=======
+import java.util.List;
+import java.util.Optional;
+>>>>>>> 7815df4c525a60344f84535d6afe50340825c05c
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,7 +26,10 @@ import com.webtodolist.model.Task;
 import com.webtodolist.model.User;
 import com.webtodolist.repository.TaskRepository;
 import com.webtodolist.repository.UserRepository;
+<<<<<<< HEAD
 import com.webtodolist.service.TaskService;
+=======
+>>>>>>> 7815df4c525a60344f84535d6afe50340825c05c
 import com.webtodolist.service.UserService;
 
 @Controller
@@ -33,6 +41,7 @@ public class CategoriesController {
     
     @Autowired
     private UserRepository userRepository;
+<<<<<<< HEAD
     
     @Autowired
     private UserService userService;
@@ -40,6 +49,12 @@ public class CategoriesController {
     @Autowired
     private TaskService taskService;
     
+=======
+
+    @Autowired
+    private UserService userService; // Aggiungi questa dipendenza
+
+>>>>>>> 7815df4c525a60344f84535d6afe50340825c05c
     @GetMapping
     public String getAllCategories(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         // Get the authenticated user
@@ -55,6 +70,7 @@ public class CategoriesController {
             // Get categories from tasks in projects where user is involved
             List<String> projectCategories = taskRepository.findDistinctCategoriesByUserProjects(user);
             
+<<<<<<< HEAD
             // Merge both lists using a Set to avoid duplicates
             Set<String> allCategories = new HashSet<>();
             allCategories.addAll(directCategories);
@@ -74,6 +90,11 @@ public class CategoriesController {
             
             model.addAttribute("categories", mergedCategories);
             model.addAttribute("taskCounts", countTasksPerCategory(allTasks));
+=======
+            model.addAttribute("categories", categories);
+            model.addAttribute("taskCounts", countTasksPerCategory(tasks));
+            model.addAttribute("userService", userService); // Aggiungi userService al modello
+>>>>>>> 7815df4c525a60344f84535d6afe50340825c05c
         }
         
         return "categories";

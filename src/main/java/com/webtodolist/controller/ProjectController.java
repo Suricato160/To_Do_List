@@ -21,6 +21,9 @@ import com.webtodolist.model.User;
 import com.webtodolist.service.ProjectService;
 import com.webtodolist.service.UserService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Controller
 @RequestMapping("/projects")
 public class ProjectController {
@@ -31,32 +34,47 @@ public class ProjectController {
     @Autowired
     private UserService userService;
 
+
+    private static final Logger logger = LoggerFactory.getLogger(TaskController.class);
+
+
+
+
+
+
+
     @GetMapping
     public String getAllProjects(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         // Ottieni l'utente autenticato
         Optional<User> currentUser = userService.findByUsername(userDetails.getUsername());
+        User user = currentUser.orElse(null); // Gestisci il caso in cui l'utente non sia presente
 
         List<Project> projects = null;
-        if (currentUser.isPresent()) {
-            projects = projectService.findProjectsByUser(currentUser.get());
+        if (user != null) {
+            projects = projectService.findProjectsByUser(user);
         }
 
-        model.addAttribute("user", userDetails);
+        model.addAttribute("user", user); // Passa l'entità User invece di UserDetails
         model.addAttribute("projects", projects);
+        model.addAttribute("userService", userService); // Aggiungi userService al modello
+
         return "projects";
     }
 
     @GetMapping("/{id}")
-    public String getProjectById(@PathVariable("id") Long id, Model model) {
+    public String getProjectById(@PathVariable("id") Long id, Model model,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        logger.info("Richiesta dettaglio progetto: id={}", id);
         Project project = projectService.findById(id);
-
-        if (project != null) {
-            model.addAttribute("project", project);
-            model.addAttribute("user", project.getUser());
-            return "projectDetail";
-        } else {
-            return "redirect:/projects";
+        if (project == null) {
+            logger.warn("Progetto non trovato per id: {}", id);
+            return "redirect:/projects?error=Progetto non trovato";
         }
+        Optional<User> currentUser = userService.findByUsername(userDetails.getUsername());
+        model.addAttribute("project", project);
+        model.addAttribute("user", currentUser.orElse(null));
+        model.addAttribute("userService", userService);
+        return "projectDetail";
     }
 
     @GetMapping("/search")
@@ -81,7 +99,8 @@ public class ProjectController {
     }
 
     @PostMapping("/create")
-    public String createProject(Project project, RedirectAttributes redirectAttributes, @AuthenticationPrincipal UserDetails userDetails) {
+    public String createProject(Project project, RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal UserDetails userDetails) {
         try {
             // Ottieni l'utente autenticato
             Optional<User> currentUser = userService.findByUsername(userDetails.getUsername());
@@ -93,10 +112,12 @@ public class ProjectController {
 
                 redirectAttributes.addFlashAttribute("successMessage", "Progetto creato con successo!");
             } else {
-                redirectAttributes.addFlashAttribute("errorMessage", "Utente non trovato. Impossibile creare il progetto.");
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "Utente non trovato. Impossibile creare il progetto.");
             }
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Errore durante la creazione del progetto: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Errore durante la creazione del progetto: " + e.getMessage());
         }
 
         return "redirect:/projects";

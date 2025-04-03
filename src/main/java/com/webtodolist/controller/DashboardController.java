@@ -36,57 +36,39 @@ public class DashboardController {
     @Autowired
     private UserService userService;
 
-    private User enrichUserWithFullName(User user) {
-        if (user != null && user.getNome() != null && user.getCognome() != null) {
-            user.setNome(user.getNome() + " " + user.getCognome());
-        }
-        return user;
-    }
-
-    @GetMapping({"/", "/index"})
+    @GetMapping({ "/", "/index" })
     public String dashboard(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        // Ottieni l'utente autenticato
         Optional<User> currentUser = userService.findByUsername(userDetails.getUsername());
-        User user = currentUser.orElse(null); // Gestisci il caso in cui l'utente non sia presente
+        User user = currentUser.orElse(null);
 
-        // Inizializza le liste
         List<Project> projects = Collections.emptyList();
         List<Task> allTasks = Collections.emptyList();
 
         if (user != null) {
-            // Trova tutti i progetti associati all'utente
             projects = projectService.findProjectsByUser(user);
-            
-            // Raccogli tutte le task dai progetti dell'utente
             allTasks = projects.stream()
                     .flatMap(project -> project.getTasks().stream())
                     .toList();
-            
             model.addAttribute("allTasks", allTasks);
-
-            
         }
 
-        // Aggiungi attributi al modello
-        model.addAttribute("user", userDetails); // Passa UserDetails (o user, se preferisci)
+        model.addAttribute("user", user); // Passa l'entità User invece di UserDetails
+        model.addAttribute("userService", userService); // Aggiungi userService al modello
         model.addAttribute("projects", projects);
 
-        // Task con deadline di oggi
         LocalDateTime todayStart = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT);
         LocalDateTime todayEnd = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
         List<Task> todayTasks = taskService.findTasksByDeadlineBetween(todayStart, todayEnd);
         model.addAttribute("todayTasks", todayTasks);
 
-        // Task completate (solo dell'utente, se vuoi filtrarle)
         List<Task> completedTasks = allTasks.stream()
                 .filter(task -> task.getStatus() == TaskStatus.COMPLETED)
                 .toList();
         model.addAttribute("completedTasks", completedTasks);
 
-        // Calcola le percentuali per i grafici
         int totalTasks = allTasks.size();
         if (totalTasks > 0) {
-            int completedCount = completedTasks.size(); // Usa la lista già filtrata
+            int completedCount = completedTasks.size();
             int inProgressCount = (int) allTasks.stream()
                     .filter(t -> t.getStatus() == TaskStatus.WORK_IN_PROGRESS)
                     .count();
@@ -117,9 +99,6 @@ public class DashboardController {
             model.addAttribute("inProgressPercentage", 0);
             model.addAttribute("pendingPercentage", 0);
         }
-
-        // Ensure the dashboard displays the full name (nome + cognome) of the user assigned to tasks
-        allTasks.forEach(task -> task.setUser(enrichUserWithFullName(task.getUser())));
 
         return "index";
     }
