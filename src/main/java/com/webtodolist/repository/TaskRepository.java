@@ -18,7 +18,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByDataDeadlineBetween(LocalDateTime todayStart, LocalDateTime todayEnd);
 
     List<Task> findByStatus(TaskStatus completed);
-
+    List<Task> findByTitoloContainingIgnoreCase(String titolo); // Nuovo metodo
     List<Task> findByUser(User user);
 
     @Query("SELECT DISTINCT t.categoria FROM Task t WHERE t.user = :user AND t.categoria IS NOT NULL AND t.categoria <> ''")

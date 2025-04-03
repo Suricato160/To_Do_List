@@ -6,6 +6,7 @@
     <title>Lista task</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/styles2.css" id="theme-stylesheet" disabled>
 </head>
@@ -30,7 +31,8 @@
     <div class="main-content">
         <!-- Header -->
         <div class="header">
-            <input type="text" class="search-bar" placeholder="Cerca tasks...">
+            <input type="text" class="search-bar form-control" placeholder="Cerca tasks..." id="searchInput">
+            <input type="hidden" id="taskId">
             <div class="icons">
                 <i class="fas fa-search"></i>
                 <i class="fas fa-bell"></i>
@@ -43,7 +45,7 @@
             </div>
         </div>
 
-        <!-- Projects Section -->
+        <!-- Task Section -->
         <div class="row mb-4">
             <div class="col-12">
                 <div class="task-card">
@@ -54,28 +56,29 @@
                         </a>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <table class="table table-hover" id="taskTable">
                             <thead>
                                 <tr>
                                     <th>ID</th>
                                     <th>Titolo</th>
                                     <th>Descrizione</th>
                                     <th>Stato</th>
-                                    <th>Completato</th>
+                                    <th>Priorità</th>
                                     <th>Scadenza</th>
                                     <th>Categoria</th>
                                     <th>Creato da</th>
                                     <th>Assegnato a</th>
                                     <th>Creato il</th>
+                                    <th>Azioni</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="task : ${tasks}">
+                                <tr th:each="task : ${tasks}" th:id="'task-' + ${task.id}">
                                     <td th:text="${task.id}">ID</td>
                                     <td th:text="${task.titolo}">Titolo</td>
                                     <td th:text="${task.descrizione}">Descrizione</td>
                                     <td th:text="${task.status}">Stato</td>
-                                    <td th:text="${task.priority}">Completato</td>
+                                    <td th:text="${task.priority}">Priorità</td>
                                     <td th:text="${task.dataDeadline != null ? #temporals.format(task.dataDeadline, 'dd/MM/yyyy') : 'N/A'}">Scadenza</td>
                                     <td th:text="${task.categoria}">Categoria</td>
                                     <td th:text="${task.assigner != null ? userService.getFullName(task.assigner) : 'N/A'}">N/A</td>
@@ -84,11 +87,12 @@
                                     <td>
                                         <div class="btn-group btn-group-sm" role="group">
                                             <a th:href="@{/tasks/detail(taskId=${task.id})}" class="btn btn-outline-primary"><i class="fas fa-eye"></i></a>
-                                            <a th:href="@{/tasks/edit(taskId=${task.id})}" class="btn btn-outline-warning"><i class="fas fa-edit"></i></a>                                    </div>
+                                            <a th:href="@{/tasks/edit(taskId=${task.id})}" class="btn btn-outline-warning"><i class="fas fa-edit"></i></a>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr th:if="${tasks == null or #lists.isEmpty(tasks)}">
-                                    <td colspan="10" class="text-center">Nessuna task disponibile</td>
+                                    <td colspan="11" class="text-center">Nessuna task disponibile</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -97,34 +101,121 @@
             </div>
         </div>
 
-        <!-- Bootstrap JS -->
+        <!-- Scripts -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const projectsLink = document.querySelector('a[href="/projects"]');
-                if (projectsLink) {
-                    projectsLink.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        window.location.href = '/projects';
+            $(document).ready(function() {
+                const taskTable = $('#taskTable');
+                const tbody = taskTable.find('tbody');
+
+                // Funzione per aggiornare la tabella
+                function updateTable(taskId) {
+                    $.get('/tasks/detail?taskId=' + taskId, function(data) {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(data, 'text/html');
+                        const task = {
+                            id: $(doc).find('input[name="taskId"]').val(),
+                            titolo: $(doc).find('h2').text(),
+                            descrizione: $(doc).find('p:contains("Descrizione") span').text(),
+                            status: $(doc).find('p:contains("Stato corrente") strong').text(),
+                            priority: $(doc).find('p:contains("Priorità") span').text(),
+                            dataDeadline: $(doc).find('p:contains("Scadenza") span').text(),
+                            categoria: $(doc).find('p:contains("Categoria") span').text(),
+                            assigner: $(doc).find('p:contains("Creato da") span').text() || 'N/A',
+                            user: $(doc).find('p:contains("Assegnato a") span').text(),
+                            dataCreatedTask: $(doc).find('p:contains("Creato il") span').text()
+                        };
+
+                        tbody.empty();
+                        if (task.id) {
+                            const row = `
+                                <tr id="task-${task.id}">
+                                    <td>${task.id}</td>
+                                    <td>${task.titolo}</td>
+                                    <td>${task.descrizione}</td>
+                                    <td>${task.status}</td>
+                                    <td>${task.priority}</td>
+                                    <td>${task.dataDeadline}</td>
+                                    <td>${task.categoria}</td>
+                                    <td>${task.assigner}</td>
+                                    <td>${task.user}</td>
+                                    <td>${task.dataCreatedTask}</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="/tasks/detail?taskId=${task.id}" class="btn btn-outline-primary"><i class="fas fa-eye"></i></a>
+                                            <a href="/tasks/edit?taskId=${task.id}" class="btn btn-outline-warning"><i class="fas fa-edit"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                            tbody.append(row);
+                        } else {
+                            tbody.append('<tr><td colspan="11" class="text-center">Nessuna task trovata</td></tr>');
+                        }
                     });
                 }
+
+                // Configurazione Autocomplete
+                $("#searchInput").autocomplete({
+    source: function(request, response) {
+        $.ajax({
+            url: "/tasks/autocomplete",
+            data: { term: request.term },
+            headers: {
+                [document.querySelector('meta[name="_csrf_header"]').getAttribute('content')]: 
+                document.querySelector('meta[name="_csrf"]').getAttribute('content')
+            },
+            success: function(data) {
+                response(data);
+            }
+        });
+    },
+    minLength: 2,
+    select: function(event, ui) {
+        this.value = ui.item.label;
+        $("#taskId").val(ui.item.value);
+        updateTable(ui.item.value);
+        return false;
+    }
+});
+
+                // Ricerca esatta con Invio
+                $("#searchInput").on('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const query = this.value.trim();
+                        if (query) {
+                            $.getJSON(`/tasks/autocomplete?term=${encodeURIComponent(query)}`, function(data) {
+                                const exactMatch = data.find(item => item.label.toLowerCase() === query.toLowerCase());
+                                if (exactMatch) {
+                                    $("#searchInput").val(exactMatch.label);
+                                    $("#taskId").val(exactMatch.value);
+                                    updateTable(exactMatch.value);
+                                } else {
+                                    tbody.empty().append('<tr><td colspan="11" class="text-center">Nessuna task trovata</td></tr>');
+                                }
+                            });
+                        }
+                    }
+                });
             });
         </script>
         <script src="/js/theme.js"></script>
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const darkModeSwitch = document.getElementById('darkModeSwitch');
-                const themeIcon = document.getElementById('themeIcon');
+            $(document).ready(function() {
+                const darkModeSwitch = $('#darkModeSwitch');
+                const themeIcon = $('#themeIcon');
                 if (localStorage.getItem('darkMode') === 'true') {
-                    themeIcon.className = 'fas fa-moon';
+                    themeIcon.removeClass().addClass('fas fa-moon');
                 } else {
-                    themeIcon.className = 'fas fa-sun';
+                    themeIcon.removeClass().addClass('fas fa-sun');
                 }
-                darkModeSwitch.addEventListener('change', function() {
+                darkModeSwitch.on('change', function() {
                     if (this.checked) {
-                        themeIcon.className = 'fas fa-moon';
+                        themeIcon.removeClass().addClass('fas fa-moon');
                     } else {
-                        themeIcon.className = 'fas fa-sun';
+                        themeIcon.removeClass().addClass('fas fa-sun');
                     }
                 });
             });

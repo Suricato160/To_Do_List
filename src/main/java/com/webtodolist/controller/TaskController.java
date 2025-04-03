@@ -13,6 +13,7 @@ import com.webtodolist.service.UserService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.slf4j.Logger;
@@ -191,44 +193,45 @@ public class TaskController {
     // Add these methods to TaskController.java
 
     @GetMapping("/tasks/detail")
-public String viewTaskDetail(@RequestParam("taskId") Long taskId, Model model) {
-    Task task = taskService.findTaskById(taskId);
-    if (task == null) {
-        logger.warn("Task non trovata per id={}", taskId);
-        return "redirect:/task-list";
-    }
-    logger.info("Task recuperata: id={}, status={}", task.getId(), task.getStatus());
+    public String viewTaskDetail(@RequestParam("taskId") Long taskId, Model model) {
+        Task task = taskService.findTaskById(taskId);
+        if (task == null) {
+            logger.warn("Task non trovata per id={}", taskId);
+            return "redirect:/task-list";
+        }
+        logger.info("Task recuperata: id={}, status={}", task.getId(), task.getStatus());
 
-    model.addAttribute("task", task);
-    model.addAttribute("comment", new Comment());
-    model.addAttribute("comments", task.getComments());
-    model.addAttribute("userService", userService);
-    Optional<User> currentUser = userService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
-    model.addAttribute("user", currentUser.orElse(null));
-    return "taskDetail";
-}
+        model.addAttribute("task", task);
+        model.addAttribute("comment", new Comment());
+        model.addAttribute("comments", task.getComments());
+        model.addAttribute("userService", userService);
+        Optional<User> currentUser = userService
+                .findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        model.addAttribute("user", currentUser.orElse(null));
+        return "taskDetail";
+    }
 
     @PostMapping("/tasks/status/update")
-public String updateTaskStatus(@RequestParam("taskId") Long taskId, 
-                              @RequestParam("status") String status, 
-                              RedirectAttributes redirectAttributes) {
-    logger.info("Aggiornamento stato: taskId={}, status={}", taskId, status);
-    Task task = taskService.findTaskById(taskId);
-    if (task != null) {
-        try {
-            Task.TaskStatus newStatus = Task.TaskStatus.valueOf(status.toUpperCase());
-            task.setStatus(newStatus);
-            taskService.saveTask(task); // Ora è transazionale
-            redirectAttributes.addFlashAttribute("successMessage", "Stato aggiornato con successo!");
-        } catch (IllegalArgumentException e) {
-            logger.error("Errore conversione stato: {}", status, e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Stato non valido: " + status);
+    public String updateTaskStatus(@RequestParam("taskId") Long taskId,
+            @RequestParam("status") String status,
+            RedirectAttributes redirectAttributes) {
+        logger.info("Aggiornamento stato: taskId={}, status={}", taskId, status);
+        Task task = taskService.findTaskById(taskId);
+        if (task != null) {
+            try {
+                Task.TaskStatus newStatus = Task.TaskStatus.valueOf(status.toUpperCase());
+                task.setStatus(newStatus);
+                taskService.saveTask(task); // Ora è transazionale
+                redirectAttributes.addFlashAttribute("successMessage", "Stato aggiornato con successo!");
+            } catch (IllegalArgumentException e) {
+                logger.error("Errore conversione stato: {}", status, e);
+                redirectAttributes.addFlashAttribute("errorMessage", "Stato non valido: " + status);
+            }
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Task non trovata.");
         }
-    } else {
-        redirectAttributes.addFlashAttribute("errorMessage", "Task non trovata.");
+        return "redirect:/tasks/detail?taskId=" + taskId;
     }
-    return "redirect:/tasks/detail?taskId=" + taskId;
-}
 
     @PostMapping("/comments/create")
     public String createComment(@ModelAttribute("comment") Comment comment,
@@ -247,22 +250,62 @@ public String updateTaskStatus(@RequestParam("taskId") Long taskId,
     }
 
     @PostMapping("/comments/update")
-public String updateComment(@RequestParam("commentId") Long commentId,
-                          @RequestParam("text") String text,
-                          @RequestParam("taskId") Long taskId) {
-    logger.info("Aggiornamento commento: commentId={}, taskId={}, text={}", commentId, taskId, text);
-    Comment comment = commentService.findCommentById(commentId);
-    if (comment != null) {
-        User currentUser = userService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
-                .orElseThrow(() -> new IllegalStateException("User not found"));
-        if (comment.getUser().getId().equals(currentUser.getId())) {
-            comment.setText(text);
-            commentService.saveComment(comment);
-            logger.info("Commento aggiornato con successo");
-        } else {
-            logger.warn("Utente non autorizzato a modificare il commento");
+    public String updateComment(@RequestParam("commentId") Long commentId,
+            @RequestParam("text") String text,
+            @RequestParam("taskId") Long taskId) {
+        logger.info("Aggiornamento commento: commentId={}, taskId={}, text={}", commentId, taskId, text);
+        Comment comment = commentService.findCommentById(commentId);
+        if (comment != null) {
+            User currentUser = userService
+                    .findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
+                    .orElseThrow(() -> new IllegalStateException("User not found"));
+            if (comment.getUser().getId().equals(currentUser.getId())) {
+                comment.setText(text);
+                commentService.saveComment(comment);
+                logger.info("Commento aggiornato con successo");
+            } else {
+                logger.warn("Utente non autorizzato a modificare il commento");
+            }
+        }
+        return "redirect:/tasks/detail?taskId=" + taskId;
+    }
+
+    // Nuovo endpoint per la ricerca
+    @GetMapping("/search")
+    @ResponseBody // Restituisce JSON per AJAX
+    public List<Task> searchTasks(@RequestParam("query") String query) {
+        logger.info("Ricerca task con query: {}", query);
+        return taskService.searchTasksByTitle(query);
+    }
+
+
+    // Endpoint per l'autocomplete
+    @GetMapping("/autocomplete")
+    @ResponseBody
+    public List<AutocompleteResponse> autocompleteTasks(@RequestParam("term") String term) {
+        logger.info("Richiesta autocomplete per term: {}", term);
+        List<Task> tasks = taskService.searchTasksByTitle(term);
+        return tasks.stream()
+                .map(task -> new AutocompleteResponse(task.getId(), task.getTitolo()))
+                .collect(Collectors.toList());
+    }
+
+    // Classe interna per la risposta JSON
+    public static class AutocompleteResponse {
+        private Long value;
+        private String label;
+
+        public AutocompleteResponse(Long value, String label) {
+            this.value = value;
+            this.label = label;
+        }
+
+        public Long getValue() {
+            return value;
+        }
+
+        public String getLabel() {
+            return label;
         }
     }
-    return "redirect:/tasks/detail?taskId=" + taskId;
-}
 }

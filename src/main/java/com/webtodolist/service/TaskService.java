@@ -59,4 +59,10 @@ public class TaskService {
         Optional<Task> task = taskRepository.findById(id);
         return task.orElse(null);
     }
+
+
+    // Nuovo metodo per la ricerca
+    public List<Task> searchTasksByTitle(String query) {
+        return taskRepository.findByTitoloContainingIgnoreCase(query);
+    }
 }
