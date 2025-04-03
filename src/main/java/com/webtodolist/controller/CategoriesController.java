@@ -1,9 +1,7 @@
 package com.webtodolist.controller;
 
-
 import java.util.List;
 import java.util.Optional;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +18,7 @@ import com.webtodolist.model.Task;
 import com.webtodolist.model.User;
 import com.webtodolist.repository.TaskRepository;
 import com.webtodolist.repository.UserRepository;
+import com.webtodolist.service.UserService;
 
 @Controller
 @RequestMapping("/categories")
@@ -30,7 +29,10 @@ public class CategoriesController {
     
     @Autowired
     private UserRepository userRepository;
-    
+
+    @Autowired
+    private UserService userService; // Aggiungi questa dipendenza
+
     @GetMapping
     public String getAllCategories(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         // Get the authenticated user
@@ -48,6 +50,7 @@ public class CategoriesController {
             
             model.addAttribute("categories", categories);
             model.addAttribute("taskCounts", countTasksPerCategory(tasks));
+            model.addAttribute("userService", userService); // Aggiungi userService al modello
         }
         
         return "categories";

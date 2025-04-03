@@ -32,19 +32,22 @@ public class ProjectController {
     private UserService userService;
 
     @GetMapping
-    public String getAllProjects(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        // Ottieni l'utente autenticato
-        Optional<User> currentUser = userService.findByUsername(userDetails.getUsername());
+public String getAllProjects(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+    // Ottieni l'utente autenticato
+    Optional<User> currentUser = userService.findByUsername(userDetails.getUsername());
+    User user = currentUser.orElse(null); // Gestisci il caso in cui l'utente non sia presente
 
-        List<Project> projects = null;
-        if (currentUser.isPresent()) {
-            projects = projectService.findProjectsByUser(currentUser.get());
-        }
-
-        model.addAttribute("user", userDetails);
-        model.addAttribute("projects", projects);
-        return "projects";
+    List<Project> projects = null;
+    if (user != null) {
+        projects = projectService.findProjectsByUser(user);
     }
+
+    model.addAttribute("user", user); // Passa l'entità User invece di UserDetails
+    model.addAttribute("projects", projects);
+    model.addAttribute("userService", userService); // Aggiungi userService al modello
+
+    return "projects";
+}
 
     @GetMapping("/{id}")
     public String getProjectById(@PathVariable("id") Long id, Model model) {

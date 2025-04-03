@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.webtodolist.model.User;
 import com.webtodolist.repository.UserRepository;
+import com.webtodolist.service.UserService;
 
 @Controller
 @RequestMapping("/settings")
@@ -19,6 +20,9 @@ public class SettingsController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
     
     @GetMapping
     public String showSettings(Model model, @AuthenticationPrincipal UserDetails userDetails) {
@@ -28,6 +32,9 @@ public class SettingsController {
         if (currentUser.isPresent()) {
             model.addAttribute("user", currentUser.get());
         }
+
+        model.addAttribute("userService", userService); // Aggiungi userService al modello
+
         
         return "settings";
     }

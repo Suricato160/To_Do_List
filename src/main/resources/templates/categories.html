@@ -14,7 +14,7 @@
     <div class="sidebar">
         <div class="profile">
             <img src="/img/user.png" alt="Profile Picture">
-            <h5 th:text="${user != null ? user.username : 'Utente'}">Utente</h5>
+            <h5 th:text="${user != null ? userService.getFullName(user) : 'Utente'}">Utente</h5>
         </div>
         <nav>
             <a href="/index" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>

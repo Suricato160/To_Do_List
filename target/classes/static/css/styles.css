@@ -535,3 +535,28 @@ a:hover {
 .dark-mode-text .theme-toggle-container .form-check-label {
     color: #95b8d1;
 }
+
+
+
+
+
+
+
+
+/* Corregge la posizione del dropdown di Select2 */
+.select2-container {
+    width: 100% !important;
+}
+
+/* Impedisce che le opzioni del dropdown vadano fuori posizione */
+.select2-container .select2-dropdown {
+    position: absolute !important;
+    z-index: 1050 !important;
+}
+
+/* Migliora la visibilità del testo digitato */
+.select2-container .select2-selection--single {
+    height: 38px;
+    display: flex;
+    align-items: center;
+}
