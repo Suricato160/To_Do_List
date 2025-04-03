@@ -5,6 +5,7 @@ import com.webtodolist.model.Task.TaskStatus;
 import com.webtodolist.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -56,5 +57,19 @@ public class TaskService {
     public Task findTaskById(Long id) {
         Optional<Task> task = taskRepository.findById(id);
         return task.orElse(null); // Restituisce null se non trovata, oppure puoi lanciare un'eccezione
+    }
+
+    /**
+     * Aggiorna il nome di una categoria in tutte le task associate
+     * @param oldCategoryName il nome attuale della categoria
+     * @param newCategoryName il nuovo nome della categoria
+     * @return il numero di task aggiornate
+     */
+    @Transactional
+    public int updateTasksCategory(String oldCategoryName, String newCategoryName) {
+        if (oldCategoryName == null || newCategoryName == null) {
+            throw new IllegalArgumentException("I nomi delle categorie non possono essere nulli");
+        }
+        return taskRepository.updateTasksCategory(oldCategoryName, newCategoryName);
     }
 }

@@ -177,4 +177,17 @@ public String updateTask(@ModelAttribute("task") Task task,
         return "taskEdit";
     }
 }
+
+@GetMapping("/tasks")
+public String getTasksByCategory(@RequestParam(value = "category", required = false) String categoryName,
+                               Model model,
+                               @AuthenticationPrincipal UserDetails userDetails) {
+    // If category parameter is provided, redirect to the category controller
+    if (categoryName != null && !categoryName.isEmpty()) {
+        return "redirect:/categories/tasks?category=" + categoryName;
+    }
+    
+    // Otherwise, show all tasks (or implement other filters)
+    return "redirect:/task-list";
+}
 }

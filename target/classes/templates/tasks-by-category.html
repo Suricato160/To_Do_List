@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List - Task per Categoria</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/styles2.css" id="theme-stylesheet" disabled>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="profile">
+            <img src="/img/user.png" alt="Profile Picture">
+            <h5 th:text="${user != null ? userService.getFullName(user) : 'Utente'}">Utente</h5>
+        </div>
+        <nav>
+            <a href="/index" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="/task-list" class="nav-link"><i class="fas fa-tasks"></i> Tutte le Task</a>
+            <a href="/projects" class="nav-link"><i class="fas fa-project-diagram"></i> Progetti</a>
+            <a href="/categories" class="nav-link active"><i class="fas fa-tag"></i> Categorie</a>
+            <a href="/settings" class="nav-link"><i class="fas fa-cog"></i> Impostazioni</a>
+            <a href="/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header mb-4">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <div class="d-flex align-items-center">
+                    <a href="/categories" class="btn btn-outline-secondary me-3">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <h2>
+                        <i class="fas fa-tag"></i> 
+                        <span th:if="${categoryName != null}">Task della categoria: <span class="text-primary" th:text="${categoryName}">Nome Categoria</span></span>
+                        <span th:unless="${categoryName != null}">Tutte le task</span>
+                    </h2>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="darkModeSwitch">
+                    <label class="form-check-label" for="darkModeSwitch">
+                        <i id="themeIcon" class="fas fa-sun"></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks List -->
+        <div class="card">
+            <div class="card-header">
+                <h5>Ecco l'elenco delle task della categoria dei progetti a cui sei assegnato.</h5>
+            </div>
+            <div class="card-body">
+                <div th:if="${tasks != null && !tasks.isEmpty()}" class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Titolo</th>
+                                <th>Descrizione</th>
+                                <th>Stato</th>
+                                <th>Priorità</th>
+                                <th>Scadenza</th>
+                                <th>Progetto</th>
+                                <th>Assegnato a</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="task : ${tasks}">
+                                <td th:text="${task.titolo}">Titolo Task</td>
+                                <td>
+                                    <span th:title="${task.descrizione}" th:text="${task.descrizione != null ? (#strings.length(task.descrizione) > 30 ? #strings.substring(task.descrizione, 0, 30) + '...' : task.descrizione) : ''}">Descrizione</span>
+                                </td>
+                                <td>
+                                    <span class="badge" 
+                                          th:classappend="${task.status == 'COMPLETED' ? 'bg-success' : (task.status == 'WORK_IN_PROGRESS' ? 'bg-warning' : 'bg-primary')}" 
+                                          th:text="${task.status}">PENDING</span>
+                                </td>
+                                <td>
+                                    <span class="badge" 
+                                          th:classappend="${task.priority == 'HIGH' ? 'bg-danger' : (task.priority == 'MEDIUM' ? 'bg-warning' : 'bg-info')}" 
+                                          th:text="${task.priority}">LOW</span>
+                                </td>
+                                <td th:text="${task.dataDeadline != null ? #temporals.format(task.dataDeadline, 'dd/MM/yyyy') : 'N/A'}">01/01/2024</td>
+                                <td th:text="${task.project != null ? task.project.title : 'N/A'}">Progetto</td>
+                                <td th:text="${task.user != null ? userService.getFullName(task.user) : 'Non assegnato'}">Utente</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a th:href="@{/tasks/edit(taskId=${task.id})}" class="btn btn-outline-warning"><i class="fas fa-edit"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div th:if="${tasks == null || tasks.isEmpty()}" class="text-center py-4">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <span th:if="${categoryName != null}">Nessuna task trovata per la categoria <strong th:text="${categoryName}">Nome Categoria</strong>.</span>
+                        <span th:unless="${categoryName != null}">Nessuna task disponibile.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/theme.js"></script>
+    <script>
+        // Aggiunge funzionalità per cambiare l'icona in base al tema
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkModeSwitch = document.getElementById('darkModeSwitch');
+            const themeIcon = document.getElementById('themeIcon');
+            
+            // Imposta l'icona corretta all'avvio
+            if (localStorage.getItem('darkMode') === 'true') {
+                themeIcon.className = 'fas fa-moon';
+            } else {
+                themeIcon.className = 'fas fa-sun';
+            }
+            
+            // Cambia l'icona quando si cambia il tema
+            darkModeSwitch.addEventListener('change', function() {
+                if (this.checked) {
+                    themeIcon.className = 'fas fa-moon';
+                } else {
+                    themeIcon.className = 'fas fa-sun';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
