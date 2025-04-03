@@ -6,6 +6,8 @@ import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -99,6 +101,17 @@ public class DashboardController {
             model.addAttribute("completedPercentage", completedPercentage);
             model.addAttribute("inProgressPercentage", inProgressPercentage);
             model.addAttribute("pendingPercentage", pendingPercentage);
+            
+            // Add additional data for detailed charts
+            model.addAttribute("completedCount", completedCount);
+            model.addAttribute("inProgressCount", inProgressCount);
+            model.addAttribute("pendingCount", pendingCount);
+            
+            // Add category counts for category chart
+            Map<String, Long> categoryData = allTasks.stream()
+                .filter(task -> task.getCategoria() != null && !task.getCategoria().isEmpty())
+                .collect(Collectors.groupingBy(Task::getCategoria, Collectors.counting()));
+            model.addAttribute("categoryData", categoryData);
         } else {
             model.addAttribute("completedPercentage", 0);
             model.addAttribute("inProgressPercentage", 0);

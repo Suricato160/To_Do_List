@@ -22,28 +22,30 @@
             <h5 th:text="${user != null ? user.username : 'Utente'}">Utente</h5>
         </div>
         <nav>
-            <a href="/index" class="nav-link active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-            <a href="/task-list" class="nav-link"><i class="fas fa-tasks"></i> Tutte le Task</a>
-            <a href="/projects" class="nav-link"><i class="fas fa-project-diagram"></i> Progetti</a>
-            <a href="/categories" class="nav-link"><i class="fas fa-tag"></i> Categorie</a>
-            <a href="/settings" class="nav-link"><i class="fas fa-cog"></i> Impostazioni</a>
-            <a href="/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a href="/index" class="nav-link active"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
+            <a href="/task-list" class="nav-link"><i class="fas fa-tasks"></i> <span>Tutte le Task</span></a>
+            <a href="/projects" class="nav-link"><i class="fas fa-project-diagram"></i> <span>Progetti</span></a>
+            <a href="/categories" class="nav-link"><i class="fas fa-tag"></i> <span>Categorie</span></a>
+            <a href="/settings" class="nav-link"><i class="fas fa-cog"></i> <span>Impostazioni</span></a>
+            <a href="/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
         </nav>
     </div>
 
     <!-- Main Content -->
     <div class="main-content">
         <!-- Header -->
-        <div class="theme-toggle-container" style="position: absolute; top: 15px; right: 15px;">
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="darkModeSwitch">
-                <label class="form-check-label" for="darkModeSwitch">
-                    <i id="themeIcon" class="fas fa-sun"></i>
-                </label>
-            </div>
-        </div>
         <div class="header">
-            <input type="text" class="search-bar" placeholder="Cerca tasks...">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <input type="text" class="search-bar" placeholder="Cerca tasks...">
+                <div class="d-flex align-items-center">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="darkModeSwitch">
+                        <label class="form-check-label" for="darkModeSwitch">
+                            <i id="themeIcon" class="fas fa-sun"></i>
+                        </label>
+                    </div>
+                </div>
+            </div>
             <!-- <div class="icons">
                 <i class="fas fa-search"></i>
                 <i class="fas fa-bell"></i>
@@ -216,46 +218,184 @@
 
     <!-- Task Status -->
     <div class="row">
-        <div class="col-12">
+        <div class="col-12 mb-4">
             <div class="task-card">
-                <h5 class="mb-3"><i class="fas fa-chart-pie me-2"></i> Stato delle Attività</h5>
-                <div class="progress-circles">
-                    <div class="progress-circle">
-                        <div class="circle completed-circle" th:text="${completedPercentage + '%'}">84%</div>
-                        <p>Completate</p>
-                    </div>
-                    <div class="progress-circle">
-                        <div class="circle in-progress-circle" th:text="${inProgressPercentage + '%'}">46%</div>
-                        <p>In Progress</p>
-                    </div>
-                    <div class="progress-circle">
-                        <div class="circle not-started-circle" th:text="${pendingPercentage + '%'}">13%</div>
-                        <p>Da Iniziare</p>
+                <h5 class="mb-3"><i class="fas fa-chart-pie me-2"></i> Statistiche Dettagliate</h5>
+                
+                <!-- Chart controls -->
+                <div class="d-flex justify-content-end mb-3">
+                    <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-primary active" id="chart3dBtn">Vista 3D</button>
+                        <button type="button" class="btn btn-outline-primary" id="chartCandleBtn">Andamento</button>
+                        <button type="button" class="btn btn-outline-primary" id="chartDistributionBtn">Distribuzione</button>
                     </div>
                 </div>
+                
+                <!-- Chart containers -->
+                <div class="row">
+                    <div class="col-md-8">
+                        <!-- Main chart container -->
+                        <div id="mainChart" style="height: 400px;"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <!-- Statistics summary -->
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h6 class="mb-0">Riepilogo</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Completate:</span>
+                                    <span class="badge bg-success" th:text="${completedPercentage + '%'}">84%</span>
+                                </div>
+                                <div class="progress mb-3">
+                                    <div class="progress-bar bg-success" role="progressbar" 
+                                         th:style="'width: ' + ${completedPercentage} + '%'" 
+                                         th:aria-valuenow="${completedPercentage}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>In Corso:</span>
+                                    <span class="badge bg-warning" th:text="${inProgressPercentage + '%'}">46%</span>
+                                </div>
+                                <div class="progress mb-3">
+                                    <div class="progress-bar bg-warning" role="progressbar" 
+                                         th:style="'width: ' + ${inProgressPercentage} + '%'" 
+                                         th:aria-valuenow="${inProgressPercentage}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Da Iniziare:</span>
+                                    <span class="badge bg-primary" th:text="${pendingPercentage + '%'}">13%</span>
+                                </div>
+                                <div class="progress mb-3">
+                                    <div class="progress-bar bg-primary" role="progressbar" 
+                                         th:style="'width: ' + ${pendingPercentage} + '%'" 
+                                         th:aria-valuenow="${pendingPercentage}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                
+                                <hr>
+                                
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Task totali:</span>
+                                    <span th:text="${allTasks != null ? #lists.size(allTasks) : 0}">0</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Progetti attivi:</span>
+                                    <span th:text="${projects != null ? #lists.size(projects.?[dataClosedProject == null]) : 0}">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Additional charts row -->
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div id="categoryChart" style="height: 300px;"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div id="trendChart" style="height: 300px;"></div>
+                    </div>
+                </div>
+                
+                <!-- Hidden data for charts -->
+                <div id="chartData" 
+                     th:data-completed="${completedPercentage}"
+                     th:data-in-progress="${inProgressPercentage}"
+                     th:data-pending="${pendingPercentage}"
+                     th:data-task-counts="${allTasks != null ? #lists.size(allTasks) : 0}"
+                     th:data-projects="${projects != null ? #lists.size(projects) : 0}"
+                     th:data-categories="${categories != null ? #lists.size(categories) : 0}"
+                     th:data-today-tasks="${todayTasks != null ? #lists.size(todayTasks) : 0}"
+                     style="display:none;"></div>
             </div>
         </div>
     </div>
-    </div>
 
+    <!-- Update the script loading for Plotly -->
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Add this right before the closing </body> tag -->
+    
+    <!-- Theme and sidebar scripts -->
+    <script src="/js/theme.js"></script>
+    <script src="/js/sidebar.js"></script>
+    
+    <!-- Charts initialization script (new unified version) -->
+    <script src="/js/charts-init.js"></script>
+    
+    <!-- Chart styling -->
+    <style>
+        /* Ensure charts are visible in both themes */
+        .js-plotly-plot .plotly .main-svg {
+            background: transparent !important;
+        }
+        
+        /* Chart containers need explicit dimensions and styling */
+        #mainChart, #categoryChart, #trendChart {
+            min-height: 300px;
+            width: 100%;
+            background-color: inherit;
+            position: relative;
+            border-radius: 8px;
+        }
+        
+        /* Chart button styling */
+        .btn-group .btn-outline-primary.active {
+            background-color: #618eff;
+            color: white;
+        }
+        
+        .dark-mode-text .btn-group .btn-outline-primary.active {
+            background-color: #81a4cd;
+            color: #2b2d42;
+        }
+        
+        /* Fix modebar appearance */
+        .js-plotly-plot .plotly .modebar {
+            transition: opacity 0.3s ease;
+        }
+        
+        .dark-mode-text .js-plotly-plot .plotly .modebar-btn path {
+            fill: #edf2f4 !important;
+        }
+        
+        .light-mode-text .js-plotly-plot .plotly .modebar-btn path {
+            fill: #333333 !important;
+        }
+    </style>
+    
+    <!-- Additional debug script -->
     <script>
-        // Ensure all navigation links work correctly
-        document.addEventListener('DOMContentLoaded', function () {
-            const projectsLink = document.querySelector('a[href="/projects"]');
-            if (projectsLink) {
-                projectsLink.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    window.location.href = '/projects';
-                });
-            }
+        // Monitor for chart loading issues
+        window.addEventListener('load', function() {
+            console.log("Window fully loaded");
+            setTimeout(function() {
+                const mainChart = document.getElementById('mainChart');
+                if (mainChart && mainChart.children.length === 0) {
+                    console.warn("Chart container still empty after page load");
+                    
+                    // Check if Plotly is loaded
+                    if (typeof Plotly === 'undefined') {
+                        console.error("Plotly still not loaded, attempting final reload");
+                        
+                        // Final attempt to load Plotly and initialize
+                        const script = document.createElement('script');
+                        script.src = "https://cdn.plot.ly/plotly-latest.min.js";
+                        script.onload = function() {
+                            console.log("Plotly loaded on final attempt");
+                            if (typeof initCharts === 'function') {
+                                initCharts();
+                            }
+                        };
+                        document.head.appendChild(script);
+                    } else if (typeof initCharts === 'function') {
+                        console.log("Attempting to reinitialize charts");
+                        initCharts();
+                    }
+                }
+            }, 1000); // Check after 1 second
         });
     </script>
-    <script src="/js/theme.js"></script>
-
 </body>
-
 </html>
