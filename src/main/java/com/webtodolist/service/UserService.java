@@ -1,6 +1,7 @@
 package com.webtodolist.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service; // Import the annotation
@@ -22,9 +23,8 @@ public class UserService {
         throw new UnsupportedOperationException("Unimplemented method 'findById'");
     }
 
-    public User findByUsername(String username) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findByUsername'");
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
 }

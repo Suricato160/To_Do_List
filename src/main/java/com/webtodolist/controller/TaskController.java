@@ -35,12 +35,23 @@ public class TaskController {
     private ProjectService projectService;
 
     @GetMapping("/task-list")
-    public String getTaskList(Model model,
-                            @AuthenticationPrincipal UserDetails userDetails) {
-        
-        model.addAttribute("user", userDetails);
+    public String getTaskList(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        // Retrieve the authenticated user using userService
+        Optional<User> currentUser = userService.findByUsername(userDetails.getUsername());
 
-        model.addAttribute("tasks", taskService.getAllTasks());
+        List<Task> tasks = null;
+        if (currentUser.isPresent()) {
+            // Fetch all projects associated with the user using projectService
+            List<Project> projects = projectService.findProjectsByUser(currentUser.get());
+
+            // Retrieve all tasks for those projects
+            tasks = projects.stream()
+                            .flatMap(project -> project.getTasks().stream())
+                            .toList();
+        }
+
+        model.addAttribute("user", userDetails);
+        model.addAttribute("tasks", tasks);
         return "task-list";
     }
 

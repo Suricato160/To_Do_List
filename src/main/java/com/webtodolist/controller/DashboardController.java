@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import com.webtodolist.model.Task;
 import com.webtodolist.model.Task.TaskStatus;
+import com.webtodolist.model.User;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.webtodolist.model.Project;
 import com.webtodolist.repository.ProjectRepository;
 import com.webtodolist.repository.TaskRepository;
+import com.webtodolist.repository.UserRepository;
 
 @Controller
 public class DashboardController {
@@ -29,6 +32,9 @@ public class DashboardController {
     @Autowired
     private ProjectRepository projectRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     
     @GetMapping({"/", "/index"})
     public String dashboard(Model model,
@@ -38,11 +44,19 @@ public class DashboardController {
         model.addAttribute("tasks", allTasks);
 
         // Ottieni tutti i progetti
-        List<Project> projects = projectRepository.findAll();
-        model.addAttribute("projects", projects);
+        // Ottieni l'utente autenticato
+        Optional<User> currentUser = userRepository.findByUsername(userDetails.getUsername());
+        
+        List<Project> projects;
+        if (currentUser.isPresent()) {
+            projects = projectRepository.findByUser(currentUser.get());
+        } else {
+            projects = null;
+        }
 
         // Ottieni l'utente autenticato
         model.addAttribute("user", userDetails);
+        model.addAttribute("projects", projects);
         
         
         
