@@ -1,10 +1,12 @@
 package com.webtodolist.service;
 
 import com.webtodolist.model.Task;
+import com.webtodolist.model.Task.TaskStatus;
 import com.webtodolist.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -15,6 +17,14 @@ public class TaskService {
 
     public List<Task> getAllTasks() {
         return taskRepository.findAll();
+    }
+
+    public List<Task> findTasksByDeadlineBetween(LocalDateTime start, LocalDateTime end) {
+        return taskRepository.findByDataDeadlineBetween(start, end);
+    }
+
+    public List<Task> findTasksByStatus(TaskStatus status) {
+        return taskRepository.findByStatus(status);
     }
 
     public void saveTask(Task task) {
