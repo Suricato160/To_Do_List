@@ -41,9 +41,6 @@ public class CategoriesController {
     @Autowired
     private TaskService taskService;
     
-
-    
-
     @GetMapping
     public String getAllCategories(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         // Get the authenticated user
@@ -67,18 +64,32 @@ public class CategoriesController {
             // Convert back to List for Thymeleaf
             List<String> mergedCategories = new ArrayList<>(allCategories);
             
-            // Get both directly assigned tasks and project tasks
-            List<Task> directTasks = taskRepository.findByUser(user);
-            List<Task> projectTasks = taskRepository.findTasksByUserProjects(user);
-            
-            // Merge task lists
+            // Get all tasks that might be relevant to this user
             List<Task> allTasks = new ArrayList<>();
-            allTasks.addAll(directTasks);
-            allTasks.addAll(projectTasks);
+            
+            // Add tasks directly assigned to the user
+            allTasks.addAll(taskRepository.findByUser(user));
+            
+            // Add tasks from projects where the user is involved
+            allTasks.addAll(taskRepository.findTasksByUserProjects(user));
+            
+            // Filter out duplicates by task ID
+            Set<Long> processedTaskIds = new HashSet<>();
+            List<Task> uniqueTasks = new ArrayList<>();
+            
+            for (Task task : allTasks) {
+                if (!processedTaskIds.contains(task.getId())) {
+                    // Only include tasks where the current user is the assignee (not the creator)
+                    if (task.getUser() != null && task.getUser().getId().equals(user.getId())) {
+                        uniqueTasks.add(task);
+                    }
+                    processedTaskIds.add(task.getId());
+                }
+            }
+            
             model.addAttribute("userService", userService);
-
             model.addAttribute("categories", mergedCategories);
-            model.addAttribute("taskCounts", countTasksPerCategory(allTasks));
+            model.addAttribute("taskCounts", countTasksPerCategory(uniqueTasks));
         }
         
         return "categories";
@@ -98,28 +109,30 @@ public class CategoriesController {
             
             // Get tasks for this category (both directly assigned to user and in user's projects)
             List<Task> directTasks = taskRepository.findByUserAndCategoria(user, categoryName);
-            
-            // Get tasks for this category from projects where the user is involved
             List<Task> projectTasks = taskRepository.findByUserProjectsAndCategoria(user, categoryName);
             
-            // Merge both task lists
             List<Task> allTasks = new ArrayList<>();
             allTasks.addAll(directTasks);
             allTasks.addAll(projectTasks);
             
-            // Filter out duplicates if any
+            // Filter out duplicates and ensure we only show tasks assigned to the current user
             Set<Long> addedTaskIds = new HashSet<>();
             List<Task> uniqueTasks = new ArrayList<>();
             
             for (Task task : allTasks) {
                 if (!addedTaskIds.contains(task.getId())) {
-                    uniqueTasks.add(task);
+                    // Only include tasks where the current user is the assignee
+                    if (task.getUser() != null && task.getUser().getId().equals(user.getId())) {
+                        uniqueTasks.add(task);
+                    }
                     addedTaskIds.add(task.getId());
                 }
             }
             
             model.addAttribute("tasks", uniqueTasks);
             model.addAttribute("categoryName", categoryName);
+            model.addAttribute("isAssignedTasksView", true);
+            model.addAttribute("categoryMessage", "Ecco l'elenco delle task della categoria a cui sei assegnato");
         } else {
             // Handle case when user is not found
             model.addAttribute("tasks", new ArrayList<>());
@@ -167,16 +180,15 @@ public class CategoriesController {
         return "redirect:/categories";
     }
     
+    // Conteggio delle task per categoria dove l'utente corrente è assegnatario (non creatore)
     private java.util.Map<String, Integer> countTasksPerCategory(List<Task> tasks) {
         java.util.Map<String, Integer> counts = new java.util.HashMap<>();
-        
         for (Task task : tasks) {
             String category = task.getCategoria();
             if (category != null && !category.isEmpty()) {
                 counts.put(category, counts.getOrDefault(category, 0) + 1);
             }
         }
-        
         return counts;
     }
 }

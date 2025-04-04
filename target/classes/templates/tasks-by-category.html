@@ -53,9 +53,12 @@
         <!-- Tasks List -->
         <div class="card">
             <div class="card-header">
-                <h5>Ecco l'elenco delle task della categoria dei progetti a cui sei assegnato.</h5>
+                <h5>👇📜📋🏷️🔍👤</h5>
             </div>
             <div class="card-body">
+                <div class="category-header" th:if="${isAssignedTasksView}">
+                    <p th:text="${categoryMessage}">Ecco l'elenco delle task della categoria dei progetti a cui sei assegnato</p>
+                </div>
                 <div th:if="${tasks != null && !tasks.isEmpty()}" class="table-responsive">
                     <table class="table table-hover">
                         <thead>
@@ -101,7 +104,7 @@
                 <div th:if="${tasks == null || tasks.isEmpty()}" class="text-center py-4">
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle me-2"></i>
-                        <span th:if="${categoryName != null}">Nessuna task trovata per la categoria <strong th:text="${categoryName}">Nome Categoria</strong>.</span>
+                        <span th:if="${categoryName != null}">Nessuna task per te assegnata trovata per la categoria <strong th:text="${categoryName}">Nome Categoria</strong>.</span>
                         <span th:unless="${categoryName != null}">Nessuna task disponibile.</span>
                     </div>
                 </div>
