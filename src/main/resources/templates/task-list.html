@@ -9,6 +9,46 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/styles2.css" id="theme-stylesheet" disabled>
+    <style>
+        /* Status filter styling */
+        .status-filter {
+            padding: 0.5rem 0;
+        }
+        
+        .status-filter .btn-outline-primary.active {
+            background-color: #618eff;
+            color: white;
+        }
+        
+        .status-filter .btn-outline-success.active {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .status-filter .btn-outline-warning.active {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        
+        .status-filter .btn-outline-info.active {
+            background-color: #17a2b8;
+            color: white;
+        }
+        
+        .status-filter .btn-outline-secondary.active {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        /* Ensure consistent spacing in buttons */
+        .status-filter .btn i {
+            margin-right: 5px;
+        }
+        
+        .gap-2 {
+            gap: 0.5rem;
+        }
+    </style>
 </head>
 <body>
     <!-- Sidebar -->
@@ -49,6 +89,27 @@
             <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-search"></i></span>
                 <input type="text" id="taskSearch" class="form-control" placeholder="Cerca task...">
+            </div>
+        </div>
+        
+        <!-- Status Filter Buttons -->
+        <div class="status-filter mt-3">
+            <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-outline-secondary btn-sm status-filter-btn active" data-status="ALL">
+                    <i class="fas fa-list-ul"></i> Tutte
+                </button>
+                <button type="button" class="btn btn-outline-primary btn-sm status-filter-btn" data-status="PENDING">
+                    <i class="fas fa-clock"></i> In attesa
+                </button>
+                <button type="button" class="btn btn-outline-info btn-sm status-filter-btn" data-status="STARTED">
+                    <i class="fas fa-hourglass-start"></i> Iniziate
+                </button>
+                <button type="button" class="btn btn-outline-warning btn-sm status-filter-btn" data-status="WORK_IN_PROGRESS">
+                    <i class="fas fa-spinner fa-spin-pulse"></i> In corso
+                </button>
+                <button type="button" class="btn btn-outline-success btn-sm status-filter-btn" data-status="COMPLETED">
+                    <i class="fas fa-check-circle"></i> Completate
+                </button>
             </div>
         </div>
 
@@ -99,7 +160,7 @@
                                     </td>
                                 </tr>
                                 <tr th:if="${tasks == null or #lists.isEmpty(tasks)}">
-                                    <td colspan="11" class="text-center">Nessuna task disponibile</td>
+                                    <td colspan="11" class="text-center">Nessuna task disponibile</td>      
                                 </tr>
                             </tbody>
                         </table>
@@ -107,38 +168,76 @@
                 </div>
             </div>
         </div>
-
-        <!-- Scripts -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-        <script src="/js/theme.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // Search functionality
-                const searchInput = document.getElementById('taskSearch');
-                if (searchInput) {
-                    searchInput.addEventListener('input', function() {
-                        const searchTerm = this.value.toLowerCase();
-                        const taskItems = document.querySelectorAll('.task-item');
-                        
-                        taskItems.forEach(function(item) {
-                            const taskTitle = item.querySelector('td:nth-child(2)').textContent.toLowerCase();
-                            const taskDescription = item.querySelector('td:nth-child(3)').textContent.toLowerCase();
-                            const taskCategory = item.querySelector('td:nth-child(7)').textContent.toLowerCase();
-                            
-                            if (taskTitle.includes(searchTerm) || 
-                                taskDescription.includes(searchTerm) || 
-                                taskCategory.includes(searchTerm)) {
-                                item.style.display = '';
-                            } else {
-                                item.style.display = 'none';
-                            }
-                        });
-                    });
-                }
-            });
-        </script>
     </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="/js/theme.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Variables to track current filters
+            let currentSearchTerm = '';
+            let currentStatusFilter = 'ALL';
+            
+            // Search functionality
+            const searchInput = document.getElementById('taskSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    currentSearchTerm = this.value.toLowerCase();
+                    applyFilters();
+                });
+            }
+            
+            // Status filter functionality
+            const statusButtons = document.querySelectorAll('.status-filter-btn');
+            statusButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    statusButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Update current status filter
+                    currentStatusFilter = this.getAttribute('data-status');
+                    
+                    // Apply filters
+                    applyFilters();
+                });
+            });
+            
+            // Function to apply both search and status filters
+            function applyFilters() {
+                const taskItems = document.querySelectorAll('.task-item');
+                
+                taskItems.forEach(function(item) {
+                    const taskTitle = item.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                    const taskDescription = item.querySelector('td:nth-child(3)').textContent.toLowerCase();
+                    const taskCategory = item.querySelector('td:nth-child(7)').textContent.toLowerCase();
+                    const taskStatus = item.querySelector('td:nth-child(4)').textContent.trim();
+                    
+                    // Check if the task matches the search term
+                    const matchesSearchTerm = 
+                        taskTitle.includes(currentSearchTerm) || 
+                        taskDescription.includes(currentSearchTerm) || 
+                        taskCategory.includes(currentSearchTerm);
+                    
+                    // Check if the task matches the status filter
+                    const matchesStatusFilter = 
+                        currentStatusFilter === 'ALL' || 
+                        taskStatus === currentStatusFilter;
+                    
+                    // Show the task only if it matches both filters
+                    if (matchesSearchTerm && matchesStatusFilter) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
