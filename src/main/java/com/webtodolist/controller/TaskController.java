@@ -323,5 +323,22 @@ public String getTasksByCategory(@RequestParam(value = "category", required = fa
     return "redirect:/task-list";
 }
 
+@PostMapping("/tasks/delete")
+public String deleteTask(@RequestParam("taskId") Long taskId, RedirectAttributes redirectAttributes) {
+    try {
+        Task task = taskService.findTaskById(taskId);
+        if (task == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Task non trovata.");
+        } else {
+            taskService.deleteTaskById(taskId);
+            redirectAttributes.addFlashAttribute("successMessage", "Task eliminata con successo.");
+        }
+    } catch (Exception e) {
+        logger.error("Errore durante l'eliminazione della task: {}", e.getMessage());
+        redirectAttributes.addFlashAttribute("errorMessage", "Errore durante l'eliminazione della task: " + e.getMessage());
+    }
+    return "redirect:/task-list";
+}
+
 }
 

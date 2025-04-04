@@ -60,6 +60,10 @@ public class TaskService {
         return task.orElse(null);
     }
 
+    @Transactional
+    public void deleteTaskById(Long id) {
+        taskRepository.deleteById(id);
+    }
 
     // Nuovo metodo per la ricerca
     public List<Task> searchTasksByTitle(String query) {
