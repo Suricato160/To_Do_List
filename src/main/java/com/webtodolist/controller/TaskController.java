@@ -72,24 +72,37 @@ public class TaskController {
     }
 
     @GetMapping("/new")
-    public String newTask(@RequestParam(value = "projectId", required = false) Long projectId, Model model) {
-        Task task = new Task();
-        Project project = null;
+public String newTask(@RequestParam(value = "projectId", required = false) Long projectId, 
+                      Model model, 
+                      @AuthenticationPrincipal UserDetails userDetails) {
+    Task task = new Task();
+    Project project = null;
 
-        if (projectId != null) {
-            project = projectService.findById(projectId);
-            if (project == null) {
-                return "redirect:/projects";
-            }
-            task.setProject(project);
+    // Recupera l'utente corrente
+    Optional<User> currentUser = userService.findByUsername(userDetails.getUsername());
+
+    if (projectId != null) {
+        project = projectService.findById(projectId);
+        if (project == null) {
+            return "redirect:/projects";
         }
-
-        model.addAttribute("task", task);
-        model.addAttribute("project", project);
-        model.addAttribute("users", userService.getAllUsers());
-        model.addAttribute("projects", projectService.getAllProjects());
-        return "taskNew";
+        task.setProject(project);
     }
+
+    // Aggiungi gli attributi al modello
+    model.addAttribute("task", task);
+    model.addAttribute("project", project);
+    model.addAttribute("users", userService.getAllUsers());
+    model.addAttribute("projects", projectService.getAllProjects());
+    model.addAttribute("userService", userService); // Già presente, ma lo lasciamo per chiarezza
+    if (currentUser.isPresent()) {
+        model.addAttribute("user", currentUser.get()); // Aggiunto l'utente corrente
+    } else {
+        model.addAttribute("user", null);
+    }
+
+    return "taskNew";
+}
 
     @PostMapping("/create")
     public String createTask(@ModelAttribute("task") Task task,
