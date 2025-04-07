@@ -22,7 +22,11 @@
             <a href="/projects" class="nav-link"><i class="fas fa-project-diagram"></i> <span>Progetti</span></a>
             <a href="/categories" class="nav-link active"><i class="fas fa-tag"></i> <span>Categorie</span></a>
             <a href="/settings" class="nav-link"><i class="fas fa-cog"></i> <span>Impostazioni</span></a>
-            <a href="/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+            <form th:action="@{/logout}" method="post" style="margin:0; padding:0;">
+                <button type="submit" class="nav-link" style="background:none; border:none; width:100%; text-align:left; cursor:pointer;">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </button>
+            </form>
         </nav>
     </div>
 
