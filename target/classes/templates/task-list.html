@@ -191,7 +191,7 @@
                     <p class="text-danger">Questa azione non può essere annullata.</p>
                 </div>
                 <div class="modal-footer">
-                    <form id="deleteTaskForm" method="post" action="/tasks/delete" th:action="@{/tasks/delete}">
+                    <form id="deleteTaskForm" method="post" action="/tasks/delete">
                         <input type="hidden" id="taskIdToDelete" name="taskId" value="">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
                         <button type="submit" class="btn btn-danger">Elimina</button>
