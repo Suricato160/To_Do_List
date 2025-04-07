@@ -11,6 +11,7 @@ import com.webtodolist.service.TaskService;
 import com.webtodolist.service.UserService;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,6 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -32,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Controller
+@RequestMapping("/tasks")
 public class TaskController {
 
     @Autowired
@@ -68,7 +71,7 @@ public class TaskController {
         return "task-list";
     }
 
-    @GetMapping("/tasks/new")
+    @GetMapping("/new")
     public String newTask(@RequestParam(value = "projectId", required = false) Long projectId, Model model) {
         Task task = new Task();
         Project project = null;
@@ -88,7 +91,7 @@ public class TaskController {
         return "taskNew";
     }
 
-    @PostMapping("/tasks/create")
+    @PostMapping("/create")
     public String createTask(@ModelAttribute("task") Task task,
             @RequestParam(value = "projectId", required = false) Long projectId, Model model) {
         try {
@@ -120,7 +123,7 @@ public class TaskController {
         }
     }
 
-    @GetMapping("/tasks/edit")
+    @GetMapping("/edit")
     public String editTask(@RequestParam("taskId") Long taskId, Model model) {
         Task task = taskService.findTaskById(taskId);
         if (task == null) {
@@ -138,7 +141,7 @@ public class TaskController {
         return "taskEdit";
     }
 
-    @PostMapping("/tasks/update")
+    @PostMapping("/update")
     public String updateTask(@ModelAttribute("task") Task task,
             @RequestParam(value = "projectId", required = false) Long projectId,
             Model model) {
@@ -192,7 +195,7 @@ public class TaskController {
 
     // Add these methods to TaskController.java
 
-    @GetMapping("/tasks/detail")
+    @GetMapping("/detail")
     public String viewTaskDetail(@RequestParam("taskId") Long taskId, Model model) {
         Task task = taskService.findTaskById(taskId);
         if (task == null) {
@@ -211,7 +214,7 @@ public class TaskController {
         return "taskDetail";
     }
 
-    @PostMapping("/tasks/status/update")
+    @PostMapping("/status/update")
     public String updateTaskStatus(@RequestParam("taskId") Long taskId,
             @RequestParam("status") String status,
             RedirectAttributes redirectAttributes) {
@@ -278,7 +281,6 @@ public class TaskController {
         return taskService.searchTasksByTitle(query);
     }
 
-
     // Endpoint per l'autocomplete
     @GetMapping("/autocomplete")
     @ResponseBody
@@ -309,36 +311,73 @@ public class TaskController {
         }
     }
 
+    @GetMapping("") // Mappa direttamente /tasks
+    public String getTasks(@RequestParam(value = "filter", required = false) String filter,
+                           @RequestParam(value = "category", required = false) String categoryName,
+                           Model model,
+                           @AuthenticationPrincipal UserDetails userDetails) {
+        Optional<User> currentUser = userService.findByUsername(userDetails.getUsername());
+        List<Task> tasks;
 
-@GetMapping("/tasks")
-public String getTasksByCategory(@RequestParam(value = "category", required = false) String categoryName,
-                               Model model,
-                               @AuthenticationPrincipal UserDetails userDetails) {
-    // If category parameter is provided, redirect to the category controller
-    if (categoryName != null && !categoryName.isEmpty()) {
-        return "redirect:/categories/tasks?category=" + categoryName;
-    }
-    
-    // Otherwise, show all tasks (or implement other filters)
-    return "redirect:/task-list";
-}
+        if (currentUser.isPresent()) {
+            List<Project> projects = projectService.findProjectsByUser(currentUser.get());
+            tasks = projects.stream()
+                           .flatMap(project -> project.getTasks().stream())
+                           .collect(Collectors.toList());
 
-@PostMapping("/tasks/delete")
-public String deleteTask(@RequestParam("taskId") Long taskId, RedirectAttributes redirectAttributes) {
-    try {
-        Task task = taskService.findTaskById(taskId);
-        if (task == null) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Task non trovata.");
+            if (filter != null) {
+                switch (filter.toLowerCase()) {
+                    case "today":
+                        LocalDateTime todayStart = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
+                        LocalDateTime todayEnd = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
+                        tasks = tasks.stream()
+                                     .filter(task -> task.getDataDeadline() != null &&
+                                                     task.getDataDeadline().isAfter(todayStart) &&
+                                                     task.getDataDeadline().isBefore(todayEnd))
+                                     .collect(Collectors.toList());
+                        break;
+                    case "completed":
+                        tasks = tasks.stream()
+                                     .filter(task -> task.getStatus() == Task.TaskStatus.COMPLETED)
+                                     .collect(Collectors.toList());
+                        break;
+                }
+            }
+
+            if (categoryName != null && !categoryName.isEmpty()) {
+                tasks = tasks.stream()
+                             .filter(task -> categoryName.equals(task.getCategoria()))
+                             .collect(Collectors.toList());
+            }
+
+            model.addAttribute("user", currentUser.get());
         } else {
+            tasks = Collections.emptyList();
+            model.addAttribute("user", null);
+        }
+
+        model.addAttribute("tasks", tasks);
+        model.addAttribute("userService", userService);
+        model.addAttribute("filter", filter);
+        return "task-list";
+    }
+
+    @PostMapping("/delete")
+    public String deleteTask(@RequestParam("taskId") Long taskId, RedirectAttributes redirectAttributes) {
+        try {
+            Task task = taskService.findTaskById(taskId);
+            if (task == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Task non trovata.");
+                return "redirect:/tasks/task-list";
+            }
             taskService.deleteTaskById(taskId);
             redirectAttributes.addFlashAttribute("successMessage", "Task eliminata con successo.");
+        } catch (Exception e) {
+            logger.error("Errore durante l'eliminazione della task con ID {}: {}", taskId, e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Errore durante l'eliminazione della task: " + e.getMessage());
         }
-    } catch (Exception e) {
-        logger.error("Errore durante l'eliminazione della task: {}", e.getMessage());
-        redirectAttributes.addFlashAttribute("errorMessage", "Errore durante l'eliminazione della task: " + e.getMessage());
+        return "redirect:/tasks/task-list";
     }
-    return "redirect:/task-list";
-}
 
 }
-

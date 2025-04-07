@@ -62,7 +62,9 @@ public class TaskService {
 
     @Transactional
     public void deleteTaskById(Long id) {
-        taskRepository.deleteById(id);
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Task con ID " + id + " non trovata"));
+        taskRepository.delete(task); // Elimina la task e i commenti
     }
 
     // Nuovo metodo per la ricerca
@@ -72,6 +74,7 @@ public class TaskService {
 
     /**
      * Aggiorna il nome di una categoria in tutte le task associate
+     * 
      * @param oldCategoryName il nome attuale della categoria
      * @param newCategoryName il nuovo nome della categoria
      * @return il numero di task aggiornate

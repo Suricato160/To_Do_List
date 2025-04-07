@@ -98,7 +98,7 @@ public class Task {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.EAGER) // Ensure assigner is eagerly fetched
+    @ManyToOne(fetch = FetchType.EAGER) 
     @JoinColumn(name = "assigner_id")
     private User assigner;
 
@@ -111,7 +111,7 @@ public class Task {
         COMPLETED
     }
 
-    public enum TaskPriority { // Nuovo enum
+    public enum TaskPriority { 
         LOW, MEDIUM, HIGH
     }
 
