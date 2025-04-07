@@ -158,66 +158,63 @@
         </div>
 
         <!-- Tasks for Today -->
-        <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="task-card">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5><i class="fas fa-calendar-day me-2"></i> Da Fare Oggi</h5>
-                    <a href="/tasks?filter=today" class="btn btn-sm btn-outline-primary">Vedi tutti</a>
+        <!-- Tasks for Today -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="task-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5><i class="fas fa-calendar-day me-2"></i> Da Fare Oggi</h5>
+                <a href="/tasks?filter=today" class="btn btn-sm btn-outline-primary">Vedi tutti</a>
+            </div>
+            <div th:each="task : ${todayTasks}" th:if="${taskStat.index < 4}"
+                 class="mb-3 p-3 border-start border-4 rounded"
+                 th:classappend="${task.status == 'COMPLETED' ? 'border-success' : (task.status == 'WORK_IN_PROGRESS' ? 'border-warning' : 'border-primary')}">
+                <div class="d-flex justify-content-between">
+                    <h6 th:text="${task.titolo}">Task Title</h6>
+                    <span class="badge"
+                          th:classappend="${task.status == 'COMPLETED' ? 'bg-success' : (task.status == 'WORK_IN_PROGRESS' ? 'bg-warning' : 'bg-primary')}"
+                          th:text="${task.status}">PENDING</span>
                 </div>
-                <div th:each="task : ${todayTasks}" th:if="${taskStat.index < 4}"
-                    class="mb-3 p-3 border-start border-4 rounded"
-                    th:classappend="${task.status == 'COMPLETED' ? 'border-success' : (task.status == 'WORK_IN_PROGRESS' ? 'border-warning' : 'border-primary')}">
-                    <div class="d-flex justify-content-between">
-                        <h6 th:text="${task.titolo}">Task Title</h6>
-                        <span class="badge"
-                            th:classappend="${task.status == 'COMPLETED' ? 'bg-success' : (task.status == 'WORK_IN_PROGRESS' ? 'bg-warning' : 'bg-primary')}"
-                            th:text="${task.status}">PENDING</span>
-                    </div>
-                    <p class="task-details" th:text="${task.descrizione}">Descrizione</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <small class="text-muted"
-                            th:text="${task.project != null ? task.project.title : 'Nessun progetto'}">Progetto</small>
-                        <small class="text-muted"
-                            th:text="${task.categoria != null ? task.categoria : 'Nessuna categoria'}">Categoria</small>
-                    </div>
-                </div>
-                <div th:if="${todayTasks == null or #lists.isEmpty(todayTasks)}" class="text-center py-4">
-                    <p>Nessuna attività per oggi</p>
+                <p class="task-details" th:text="${task.descrizione}">Descrizione</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted" th:text="${task.project != null ? task.project.title : 'Nessun progetto'}">Progetto</small>
+                    <small class="text-muted" th:text="${task.categoria != null ? task.categoria : 'Nessuna categoria'}">Categoria</small>
                 </div>
             </div>
-        </div>
-        <!-- Resto del codice -->
-
-
-        <!-- Completed Tasks -->
-        <div class="col-md-6">
-            <div class="task-card">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5><i class="fas fa-check-circle me-2"></i> Completate Recentemente</h5>
-                    <a href="/tasks?filter=completed" class="btn btn-sm btn-outline-primary">Vedi tutte</a>
-                </div>
-                <div th:each="task : ${completedTasks}" th:if="${taskStat.index < 4}" class="completed-task">
-                    <div class="d-flex align-items-center">
-                        <div class="bg-success text-white rounded-circle d-flex justify-content-center align-items-center me-3"
-                            style="width: 40px; height: 40px;">
-                            <i class="fas fa-check"></i>
-                        </div>
-                        <div class="task-info">
-                            <h6 th:text="${task.titolo}">Task Title</h6>
-                            <p th:text="${task.descrizione}">Descrizione</p>
-                            <p class="status"
-                                th:text="'Completata il ' + ${#temporals.format(task.dataCompleted, 'dd/MM/yyyy')}">
-                                Completata il 20/06/2023</p>
-                        </div>
-                    </div>
-                </div>
-                <div th:if="${completedTasks == null or #lists.isEmpty(completedTasks)}" class="text-center py-4">
-                    <p>Nessuna attività completata di recente</p>
-                </div>
+            <div th:if="${todayTasks == null or #lists.isEmpty(todayTasks)}" class="text-center py-4">
+                <p>Nessuna attività per oggi</p>
             </div>
         </div>
     </div>
+
+    <!-- Completed Tasks -->
+    <div class="col-md-6">
+        <div class="task-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5><i class="fas fa-check-circle me-2"></i> Completate Recentemente</h5>
+                <a href="/tasks?filter=completed" class="btn btn-sm btn-outline-primary">Vedi tutte</a>
+            </div>
+            <div th:each="task : ${completedTasks}" th:if="${taskStat.index < 4}" class="completed-task">
+                <div class="d-flex align-items-center">
+                    <div class="bg-success text-white rounded-circle d-flex justify-content-center align-items-center me-3"
+                         style="width: 40px; height: 40px;">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="task-info">
+                        <h6 th:text="${task.titolo}">Task Title</h6>
+                        <p th:text="${task.descrizione}">Descrizione</p>
+                        <p class="status"
+                           th:text="'Completata il ' + ${#temporals.format(task.dataCompleted, 'dd/MM/yyyy')}">
+                            Completata il 20/06/2023</p>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${completedTasks == null or #lists.isEmpty(completedTasks)}" class="text-center py-4">
+                <p>Nessuna attività completata di recente</p>
+            </div>
+        </div>
+    </div>
+</div>
 
     <!-- Task Status -->
     <div class="row">

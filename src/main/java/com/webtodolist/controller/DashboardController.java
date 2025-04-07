@@ -43,38 +43,74 @@ public class DashboardController {
 
         List<Project> projects = Collections.emptyList();
         List<Task> allTasks = Collections.emptyList();
+        List<Task> todayTasks = Collections.emptyList();
+        List<Task> completedTasks = Collections.emptyList();
 
         if (user != null) {
             projects = projectService.findProjectsByUser(user);
             allTasks = projects.stream()
-                    .flatMap(project -> project.getTasks().stream())
-                    .toList();
+                              .flatMap(project -> project.getTasks().stream())
+                              .toList();
+
+            // Definisci i limiti temporali
+            LocalDateTime todayStart = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT);
+            LocalDateTime todayEnd = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+            LocalDateTime twoDaysAgo = LocalDateTime.now().minusDays(2); // Limite per task completate
+
+            // Filtra le task di oggi (non completate) in base al ruolo
+            if ("PROJECT_MANAGER".equals(user.getRole())) { // Adatta se il ruolo è un enum
+                todayTasks = allTasks.stream()
+                                     .filter(task -> task.getAssigner() != null && task.getAssigner().getId().equals(user.getId())) // Create dall'utente
+                                     .filter(task -> task.getStatus() != TaskStatus.COMPLETED) // Non completate
+                                     .filter(task -> task.getDataDeadline() != null && 
+                                                     task.getDataDeadline().isAfter(todayStart) && 
+                                                     task.getDataDeadline().isBefore(todayEnd))
+                                     .collect(Collectors.toList());
+            } else {
+                todayTasks = allTasks.stream()
+                                     .filter(task -> task.getUser() != null && task.getUser().getId().equals(user.getId())) // Assegnate all'utente
+                                     .filter(task -> task.getStatus() != TaskStatus.COMPLETED) // Non completate
+                                     .filter(task -> task.getDataDeadline() != null && 
+                                                     task.getDataDeadline().isAfter(todayStart) && 
+                                                     task.getDataDeadline().isBefore(todayEnd))
+                                     .collect(Collectors.toList());
+            }
+
+            // Filtra le task completate negli ultimi 2 giorni in base al ruolo
+            if ("PROJECT_MANAGER".equals(user.getRole())) {
+                completedTasks = allTasks.stream()
+                                         .filter(task -> task.getAssigner() != null && task.getAssigner().getId().equals(user.getId())) // Create dall'utente
+                                         .filter(task -> task.getStatus() == TaskStatus.COMPLETED) // Completate
+                                         .filter(task -> task.getDataCompleted() != null && 
+                                                         task.getDataCompleted().isAfter(twoDaysAgo)) // Ultimi 2 giorni
+                                         .collect(Collectors.toList());
+            } else {
+                completedTasks = allTasks.stream()
+                                         .filter(task -> task.getUser() != null && task.getUser().getId().equals(user.getId())) // Assegnate all'utente
+                                         .filter(task -> task.getStatus() == TaskStatus.COMPLETED) // Completate
+                                         .filter(task -> task.getDataCompleted() != null && 
+                                                         task.getDataCompleted().isAfter(twoDaysAgo)) // Ultimi 2 giorni
+                                         .collect(Collectors.toList());
+            }
+
             model.addAttribute("allTasks", allTasks);
         }
 
-        model.addAttribute("user", user); // Passa l'entità User invece di UserDetails
-        model.addAttribute("userService", userService); // Aggiungi userService al modello
+        model.addAttribute("user", user);
+        model.addAttribute("userService", userService);
         model.addAttribute("projects", projects);
-
-        LocalDateTime todayStart = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT);
-        LocalDateTime todayEnd = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
-        List<Task> todayTasks = taskService.findTasksByDeadlineBetween(todayStart, todayEnd);
         model.addAttribute("todayTasks", todayTasks);
-
-        List<Task> completedTasks = allTasks.stream()
-                .filter(task -> task.getStatus() == TaskStatus.COMPLETED)
-                .toList();
         model.addAttribute("completedTasks", completedTasks);
 
         int totalTasks = allTasks.size();
         if (totalTasks > 0) {
             int completedCount = completedTasks.size();
             int inProgressCount = (int) allTasks.stream()
-                    .filter(t -> t.getStatus() == TaskStatus.WORK_IN_PROGRESS)
-                    .count();
+                                               .filter(t -> t.getStatus() == TaskStatus.WORK_IN_PROGRESS)
+                                               .count();
             int pendingCount = (int) allTasks.stream()
-                    .filter(t -> t.getStatus() == TaskStatus.PENDING || t.getStatus() == TaskStatus.STARTED)
-                    .count();
+                                            .filter(t -> t.getStatus() == TaskStatus.PENDING || t.getStatus() == TaskStatus.STARTED)
+                                            .count();
 
             int completedPercentage = (completedCount * 100) / totalTasks;
             int inProgressPercentage = (inProgressCount * 100) / totalTasks;
@@ -83,16 +119,13 @@ public class DashboardController {
             model.addAttribute("completedPercentage", completedPercentage);
             model.addAttribute("inProgressPercentage", inProgressPercentage);
             model.addAttribute("pendingPercentage", pendingPercentage);
-            
-            // Add additional data for detailed charts
             model.addAttribute("completedCount", completedCount);
             model.addAttribute("inProgressCount", inProgressCount);
             model.addAttribute("pendingCount", pendingCount);
-            
-            // Add category counts for category chart
+
             Map<String, Long> categoryData = allTasks.stream()
-                .filter(task -> task.getCategoria() != null && !task.getCategoria().isEmpty())
-                .collect(Collectors.groupingBy(Task::getCategoria, Collectors.counting()));
+                                                    .filter(task -> task.getCategoria() != null && !task.getCategoria().isEmpty())
+                                                    .collect(Collectors.groupingBy(Task::getCategoria, Collectors.counting()));
             model.addAttribute("categoryData", categoryData);
         } else {
             model.addAttribute("completedPercentage", 0);
