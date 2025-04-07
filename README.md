@@ -46,8 +46,8 @@
 
 ### Backend
 
-- Java 17
-- Spring Boot 3.x
+- Java 21
+- Spring Boot
 - Spring Security per l'autenticazione
 - Spring Data JPA per la persistenza
 
@@ -62,13 +62,13 @@
 
 ### Database
 
-- MySQL/PostgreSQL per la persistenza dei dati
+- MySQL per la persistenza dei dati
 - Modello relazionale con entità principali (User, Project, Task, Comment)
 
 ### Altre Tecnologie
 
 - Maven per la gestione delle dipendenze
-- Git per il controllo versione
+- GitHub per il controllo versione
 
 ## Struttura del Database
 
@@ -103,10 +103,10 @@
 
 ### Prerequisiti
 
-- JDK 17 o superiore
+- JDK 21 o superiore
 - Maven 3.6+
-- MySQL/PostgreSQL
-- Git (opzionale)
+- MySQL
+- GitHub (opzionale)
 
 ### Installazione
 
@@ -120,7 +120,7 @@
 2. Configura il file `application.properties` con i dettagli del tuo database:
 
    ```properties
-   spring.datasource.url=jdbc:mysql://localhost:3306/todolist_db
+   spring.datasource.url=jdbc:mysql://localhost:3306/ToDoList_db
    spring.datasource.username=root
    spring.datasource.password=blackfriday
    spring.jpa.hibernate.ddl-auto=validate
@@ -164,7 +164,7 @@ Questa applicazione è stata sviluppata principalmente a scopo educativo e dimos
 Per domande, suggerimenti o collaborazioni, contattami:
 
 - Email: rytosm43@gmail.com (Osama Rytami)
-- Email: adriano.pascolo@gmail.com (Adriano Nevio Pascolo)
+- Email: pascoloadriano@gmail.com (Adriano Nevio Pascolo)
 - GitHub: @BoomTrading
 - GitHub: @Suricato160
 
