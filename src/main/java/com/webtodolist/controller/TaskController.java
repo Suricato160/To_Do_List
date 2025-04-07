@@ -140,7 +140,7 @@ public String newTask(@RequestParam(value = "projectId", required = false) Long 
     public String editTask(@RequestParam("taskId") Long taskId, Model model) {
         Task task = taskService.findTaskById(taskId);
         if (task == null) {
-            return "redirect:/task-list"; // Task non trovata, torna alla lista
+            return "redirect:/tasks"; // Modificato da "redirect:/task-list" a "redirect:/tasks"
         }
 
         model.addAttribute("task", task);
@@ -191,7 +191,7 @@ public String newTask(@RequestParam(value = "projectId", required = false) Long 
             }
 
             taskService.saveTask(existingTask);
-            return "redirect:/task-list"; // O torna al dettaglio del progetto: /projects/{projectId}
+            return "redirect:/tasks"; // Modificato da "redirect:/task-list" a "redirect:/tasks"
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("task", task);
@@ -213,7 +213,7 @@ public String newTask(@RequestParam(value = "projectId", required = false) Long 
         Task task = taskService.findTaskById(taskId);
         if (task == null) {
             logger.warn("Task non trovata per id={}", taskId);
-            return "redirect:/task-list";
+            return "redirect:/tasks"; // Modificato da "redirect:/task-list" a "redirect:/tasks"
         }
         logger.info("Task recuperata: id={}, status={}", task.getId(), task.getStatus());
 
@@ -381,7 +381,7 @@ public String newTask(@RequestParam(value = "projectId", required = false) Long 
             Task task = taskService.findTaskById(taskId);
             if (task == null) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Task non trovata.");
-                return "redirect:/tasks/task-list";
+                return "redirect:/tasks"; // Modificato da "redirect:/tasks/task-list" a "redirect:/tasks"
             }
             taskService.deleteTaskById(taskId);
             redirectAttributes.addFlashAttribute("successMessage", "Task eliminata con successo.");
@@ -390,7 +390,7 @@ public String newTask(@RequestParam(value = "projectId", required = false) Long 
             redirectAttributes.addFlashAttribute("errorMessage",
                     "Errore durante l'eliminazione della task: " + e.getMessage());
         }
-        return "redirect:/tasks/task-list";
+        return "redirect:/tasks"; // Modificato da "redirect:/tasks/task-list" a "redirect:/tasks"
     }
 
 }
