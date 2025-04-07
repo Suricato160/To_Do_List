@@ -208,7 +208,6 @@ body {
 
 /* Task Card */
 .task-card {
-    background-color: #4d5076;
     padding: 15px;
     margin-bottom: 20px;
 }
@@ -254,8 +253,6 @@ body {
 
 /* Completed Task */
 .completed-task {
-    background-color: #353852 !important; /* Forziamo lo sfondo scuro */
-
     padding: 15px;
     display: flex;
     align-items: center;
@@ -281,45 +278,29 @@ body {
 
 /* Table Styling */
 .table {
-    background-color: #353852 !important; /* Forziamo lo sfondo scuro */
+    background-color: #353852;
     border-color: #5c637a;
     color: #ffffff; /* Testo bianco per tutta la tabella */
 }
 
 .table thead th {
-    background-color: #3d405b !important; /* Forziamo lo sfondo dell'intestazione */
+    background-color: #3d405b;
     color: #ffffff; /* Testo bianco per l'intestazione */
     border-bottom: 2px solid #5c637a;
 }
 
-.table tbody {
-    background-color: #353852 !important; /* Forziamo lo sfondo del corpo */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #2b2d42;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #5c637a;
+    color: #ffffff; /* Testo bianco al passaggio del mouse */
 }
 
 .table th,
 .table td {
     border-color: #5c637a;
-    background-color: #353852 !important; /* Forziamo lo sfondo delle celle */
-    color: #ffffff; /* Testo bianco per le celle */
-}
-
-.table-striped tbody tr:nth-of-type(odd) {
-    background-color: #2b2d42 !important; /* Righe alternate */
-}
-
-.table-striped>tbody>tr:nth-of-type(odd)>* {
-    background-color: #2b2d42 !important;
-    color: #ffffff; /* Testo bianco per le righe alternate */
-}
-
-.table-hover tbody tr:hover {
-    background-color: #5c637a !important; /* Sfondo su hover */
-    color: #ffffff; /* Testo bianco su hover */
-}
-
-.table-hover tbody tr:hover td {
-    background-color: #5c637a !important;
-    color: #ffffff; /* Testo bianco su hover */
 }
 
 /* Table Links */
@@ -331,11 +312,6 @@ body {
 .table a:hover {
     color: #b8bedd;
     text-decoration: underline;
-}
-
-/* Table Responsive */
-.table-responsive {
-    background-color: #353852 !important; /* Forziamo lo sfondo del contenitore */
 }
 
 /* Buttons */
@@ -420,10 +396,15 @@ body {
     color: #edf2f4;
 }
 
+/* Table Responsive */
+.table-responsive {
+    background-color: #353852;
+}
+
 /* Override Bootstrap Defaults */
 .bg-white,
 .bg-body {
-    background-color: #353852 !important; /* Forziamo lo sfondo scuro ovunque */
+    background-color: #353852 !important;
 }
 
 /* Badges */
@@ -433,35 +414,9 @@ body {
 
 /* Login and Register Forms */
 .container {
-    background-color: #353852 !important; /* Forziamo lo sfondo scuro */
-
     max-width: 500px;
     margin: 50px auto;
     padding: 30px;
-}
-
-.login-card{
-    background-color: #353852 !important; /* Forziamo lo sfondo scuro */
-    color: white !important;
-}
-
-.login-card h3{
-    color: white !important;
-}
-
-.form-control {
-    background-color: #353852 !important; /* Forziamo lo sfondo scuro */
-    color: white !important;
-}
-
-.form-control::placeholder {
-    color: white !important;
-    opacity: 1 !important;
-}
-
-.form-control::placeholder {
-    color: white; /* Imposta il colore del placeholder su bianco */
-    opacity: 1;   /* Assicura che il placeholder sia completamente visibile */
 }
 
 .container h1,
@@ -481,7 +436,6 @@ body {
 }
 
 .form-group input {
-    background-color: #4d5076;
     width: 100%;
     padding: 10px;
     border: 1px solid #5c637a;
@@ -657,28 +611,8 @@ button[type="submit"]:hover {
 
 .dark-mode-text .js-plotly-plot .plotly .modebar {
     background-color: rgba(53, 56, 82, 0.7) !important;
-    color: white;
 }
 
 .dark-mode-text .js-plotly-plot .plotly .modebar-btn path {
     fill: #edf2f4 !important;
-}
-
-
-
-
-.col-md-4{
-    color: white;
-}
-
-.card{
-    color: white;
-}
-
-.main-svg{
-    color: white;
-}
-
-.infolayer{
-color:white !important;
 }
