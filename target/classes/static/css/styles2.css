@@ -432,9 +432,18 @@ body {
 }
 
 /* Login and Register Forms */
+.register-card {
+    background-color: #353852 !important; /* Blu scuro profondo */
+    color: white !important;
+}
+
+.register-card h3{
+    color: white !important;
+}
+
+
 .container {
     background-color: #353852 !important; /* Forziamo lo sfondo scuro */
-
     max-width: 500px;
     margin: 50px auto;
     padding: 30px;
